@@ -12,6 +12,8 @@ export class Game extends Scene
 
     preload (){
         this.load.image ("block", '.public/assets/cuadrado.png');
+        this.load.image("background", '/assets/background.png');
+
 
     }
 
