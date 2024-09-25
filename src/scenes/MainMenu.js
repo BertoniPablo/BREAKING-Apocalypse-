@@ -9,15 +9,34 @@ export class MainMenu extends Scene
 
     create ()
     {
-        this.add.image(512, 384, 'background');
+        this.add.image(580, 384, 'background').setScale(2);
+        this.add.image(580, 300, 'logo').setScale(1.5);
+    
+        this.playButton = this.add.image(580, 460, "playButton").setInteractive().setScale(0.2).setVisible(true);
+        this.playButton.on('pointerover', () => {
+            this.playButton.setScale(0.19);
+        });
 
-        this.add.image(512, 300, 'logo');
+        this.playButton.on('pointerout', () => {
+            this.playButton.setScale(0.2);
+        });
 
-        this.add.text(512, 460, 'Main Menu', {
-            fontFamily: 'Arial Black', fontSize: 38, color: '#ffffff',
-            stroke: '#000000', strokeThickness: 8,
-            align: 'center'
-        }).setOrigin(0.5);
+        this.playButton.on('pointerdown', () => {
+            this.scene.start('Inicio');
+        });
+
+        this.langButton = this.add.image(580, 550, "langButton").setInteractive().setScale(0.5).setVisible(true);
+        this.langButton.on('pointerover', () => {
+            this.langButton.setScale(0.49);
+        });
+
+        this.langButton.on('pointerout', () => {
+            this.langButton.setScale(0.5);
+        });
+
+        this.langButton.on('pointerdown', () => {
+            this.scene.start('Inicio');
+        });
 
         this.input.once('pointerdown', () => {
 

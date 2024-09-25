@@ -1,53 +1,95 @@
 import { Scene } from 'phaser';
 
-export class Game extends Scene
-{
-    constructor ()
-    {
+export class Game extends Scene {
+    constructor() {
         super('Game');
-        this.blocks; // matriz de bloques
-        this.points1 = 0; //puntos p1
-        this.points2 = 0; //puntos p2
+        this.blocks; //matriz de bloques
+        this.keyA; // para eliminar bloques
+        this.score = 0; 
+        this.timeLeft = 60; 
     }
 
-    preload (){
-        this.load.image ("block", '.public/assets/cuadrado.png');
-        this.load.image("background", '/assets/background.png');
-
-
+    preload() {
+        this.load.image("block", '.public/assets/cuadrado.png'); 
+        this.load
     }
 
-    create ()
-    {
-        this.cameras.main.setBackgroundColor(0x00ff00);
-        this.add.image(500, 200,"block"). setScale (1);
-        this.add.image(512, 384, 'background').setAlpha(0.5);
+    create() {
+    
+        this.keyA = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
+        
+        this.createBlocksAtBottom();//matriz de bloques en la parte inferior de la pantalla
 
-        this.add.text(512, 384, 'Make something fun!\nand share it with us:\nsupport@phaser.io', {
-            fontFamily: 'Arial Black', fontSize: 38, color: '#ffffff',
-            stroke: '#000000', strokeThickness: 8,
-            align: 'center'
-        }).setOrigin(0.5);
+        this.timerText = this.add.text(10, 50, `Time: ${this.timeLeft}`, {
+            fontSize: '32px',
+            fill: '#ffffff'
+        }); 
 
-        this.blocks = this.physics.add.staticGroup();
-        for (let i = 0; i < 5; i++) { // 5 filas
-            for (let j = 0; j < 10; j++) { // 10 columnas
-                let blockX = 80 + j * 95;
-                let blockY = 100 + i * 40;
-                this.blocks.create(blockX, blockY, 'block').setScale(0.5).refreshBody();
-            }
-        }      
+        this.scoreText = this.add.text(10, 10, `Score: ${this.score}`, {
+            fontSize: '32px',
+            fill: '#ffffff'
+        });
 
-        //límites del mundo
-        this.physics.world.setBounds(0, 0, this.game.config.width, this.game.config.height);
+        this.timerEvent = this.time.addEvent({
+            delay: 1000,                
+            callback: this.updateTimer, 
+            callbackScope: this,
+            loop: true                  
+        });
+        
 
-        //colisión con el límite inferior del mundo
-        this.physics.world.on("worldbounds", this.checkWorldBounds, this);
-
-        this.input.once('pointerdown', () => {
-
-            this.scene.start('GameOver');
-
+        this.input.keyboard.on('keydown-A', () => {
+            this.removeBlock();
         });
     }
+
+    createBlocksAtBottom() {
+        this.blocks = this.physics.add.staticGroup();
+        
+        const screenWidth = this.game.config.width;
+        const screenHeight = this.game.config.height;
+
+        const blockWidth = 95; 
+        const blockHeight = 40; 
+
+        const numCols = Math.floor(screenWidth / blockWidth);
+        const numRows = 5; 
+
+       
+        const startY = screenHeight - (numRows * blockHeight); 
+        for (let row = 0; row < numRows; row++) {
+            for (let col = 0; col < numCols; col++) {
+                let blockX = col * blockWidth + blockWidth / 2;
+                let blockY = startY + row * blockHeight;
+                this.blocks.create(blockX, blockY, 'block').setScale(0.5).refreshBody();
+            }
+        }
+    }
+
+    removeBlock() {
+        let block = this.blocks.getFirstAlive(); //primer bloque vivo del grupo
+
+        if (block) {
+            block.destroy(); 
+            
+            this.score += 10;
+            this.scoreText.setText(`Score: ${this.score}`);
+        }
+    }
+
+    updateTimer() {
+        this.timeLeft--; 
+        this.timerText.setText(`Time: ${this.timeLeft}`); 
+
+        if (this.timeLeft <= 0) {
+            this.timerEvent.remove(); 
+            this.scene.start('GameOver'); 
+        }
+    }
+
+    update() {
+        
+    }
 }
+
+
