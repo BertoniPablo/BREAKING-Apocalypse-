@@ -22,7 +22,7 @@ export class MainMenu extends Scene
         });
 
         this.playButton.on('pointerdown', () => {
-            this.scene.start('Inicio');
+            this.scene.start('Game');
         });
 
         this.langButton = this.add.image(580, 550, "langButton").setInteractive().setScale(0.5).setVisible(true);
@@ -34,14 +34,5 @@ export class MainMenu extends Scene
             this.langButton.setScale(0.5);
         });
 
-        this.langButton.on('pointerdown', () => {
-            this.scene.start('Inicio');
-        });
-
-        this.input.once('pointerdown', () => {
-
-            this.scene.start('Game');
-
-        });
     }
 }
