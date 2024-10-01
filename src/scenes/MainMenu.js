@@ -25,14 +25,44 @@ export class MainMenu extends Scene
             this.scene.start('Game');
         });
 
-        this.langButton = this.add.image(580, 550, "langButton").setInteractive().setScale(0.5).setVisible(true);
-        this.langButton.on('pointerover', () => {
-            this.langButton.setScale(0.49);
+        this.langUSButton = this.add.image(620, 550, "langUSButton").setInteractive().setScale(0.5).setVisible(true);
+        this.langUSButton.on('pointerover', () => {
+            this.langUSButton.setScale(0.49);
+        });
+        this.langUSButton.on('pointerout', () => {
+            this.langUSButton.setScale(0.5);
         });
 
-        this.langButton.on('pointerout', () => {
-            this.langButton.setScale(0.5);
+        this.langARButton = this.add.image(460, 550, "langARButton").setInteractive().setScale(0.125).setVisible(true);
+        this.langARButton.on('pointerover', () => {
+            this.langARButton.setScale(0.117);
+        });
+        this.langARButton.on('pointerout', () => {
+            this.langARButton.setScale(0.125);
         });
 
+        this.langFRButton = this.add.image(540, 550, "langFRButton").setInteractive().setScale(0.187).setVisible(true);
+        this.langFRButton.on('pointerover', () => {
+            this.langFRButton.setScale(0.179);
+        });
+        this.langFRButton.on('pointerout', () => {
+            this.langFRButton.setScale(0.187);
+        });
+
+        this.langITButton = this.add.image(700, 550, "langITButton").setInteractive().setScale(0.125).setVisible(true);
+        this.langITButton.on('pointerover', () => {
+            this.langITButton.setScale(0.119);
+        });
+        this.langITButton.on('pointerout', () => {
+            this.langITButton.setScale(0.125);
+        });
+
+        this.langBRButton = this.add.image(580, 630, "langBRButton").setInteractive().setScale(0.187).setVisible(true);
+        this.langBRButton.on('pointerover', () => {
+            this.langBRButton.setScale(0.179);
+        });
+        this.langBRButton.on('pointerout', () => {
+            this.langBRButton.setScale(0.187);
+        });
     }
 }

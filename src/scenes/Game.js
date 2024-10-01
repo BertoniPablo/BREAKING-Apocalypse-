@@ -1,6 +1,7 @@
 import { Scene } from 'phaser';
 
 export class Game extends Scene {
+
     constructor() {
         super('Game');
         this.player1 = {
@@ -13,6 +14,10 @@ export class Game extends Scene {
         };
         this.timeLeft = 60; 
         this.margin = 19; //margen 
+    }
+    
+    init(){
+        this.timeLeft = 60
     }
 
     preload() {

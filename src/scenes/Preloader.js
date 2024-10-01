@@ -32,9 +32,16 @@ export class Preloader extends Scene
         this.load.setPath('assets');
         this.load.image ('block', 'cuadrado.png');
         this.load.image('logo', 'logo.png');
-        this.load.image('langButton', 'lang.png');
+
+        this.load.image('langUSButton', 'langUS.png');
+        this.load.image('langARButton', 'langAR.png');
+        this.load.image('langFRButton', 'langFR.png');
+        this.load.image('langITButton', 'langIT.png');
+        this.load.image('langBRButton', 'langBR.png');
+
         this.load.image('playButton', 'play.png');
         this.load.image('background', 'fondo.jpg');
+
         this.load.spritesheet('spritePP', 'sprite-sheet.png', {
             frameWidth: 166.6667,
             frameHeight: 158,
