@@ -29,21 +29,72 @@ export class Preloader extends Scene
 
     preload ()
     {
-        //  Load the assets for the game - Replace with your own assets
         this.load.setPath('assets');
         this.load.image ('block', 'cuadrado.png');
         this.load.image('logo', 'logo.png');
         this.load.image('langButton', 'lang.png');
         this.load.image('playButton', 'play.png');
         this.load.image('background', 'fondo.jpg');
+        this.load.spritesheet('spritePP', 'sprite-sheet.png', {
+            frameWidth: 166.6667,
+            frameHeight: 158,
+        });
     }
 
     create ()
     {
-        //  When all the assets have loaded, it's often worth creating global objects here that the rest of the game can use.
-        //  For example, you can define global animations here, so we can use them in other scenes.
+        
+        //animación estática
+        this.anims.create({
+            key: 'PJ1_idle',
+            frames: [{ key: 'spritePP', frame: 8 }],  
+            frameRate: 10,
+            repeat: -1
+        });
+        this.anims.create({
+            key: 'PJ2_idle',
+            frames: [{ key: 'spritePP', frame: 9 }],  
+            frameRate: 10,
+            repeat: -1
+        });
+        this.anims.create({
+            key: "PJ1_pala", 
+            frames: this.anims.generateFrameNumbers("spritePP", {start: 6, end: 7}),
+            frameRate: 10,
+            repeat: 0,
+        })
+        this.anims.create({
+            key: "PJ2_pala", 
+            frames: this.anims.generateFrameNumbers("spritePP", {start: 13, end: 15}),
+            frameRate: 10,
+            repeat: 0,
+        })
+        this.anims.create({
+            key: "PJ1_pico", 
+            frames: this.anims.generateFrameNumbers("spritePP", {start: 0, end: 2 }),
+            frameRate: 10,
+            repeat: 0,
+        })
+        this.anims.create({
+            key: "PJ2_pico", 
+            frames: this.anims.generateFrameNumbers("spritePP", {start: 16, end: 18}),
+            frameRate: 10,
+            repeat: 0,
+        })
+        this.anims.create({
+            key: "PJ1_hacha", 
+            frames: this.anims.generateFrameNumbers("spritePP", {start: 3, end:5 }),
+            frameRate: 10,
+            repeat: 0,
+        })
+        this.anims.create({
+            key: "PJ2_hacha", 
+            frames: this.anims.generateFrameNumbers("spritePP", {start:10 , end:12 }),
+            frameRate: 10,
+            repeat: 0,
+        })
 
-        //  Move to the MainMenu. You could also swap this for a Scene Transition, such as a camera fade.
+        
         this.scene.start('MainMenu');
     }
 }

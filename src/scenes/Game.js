@@ -6,12 +6,10 @@ export class Game extends Scene {
         this.player1 = {
             score: 0,
             controls: null,
-            blocks: null,
         };
         this.player2 = {
             score: 0,
             controls: null,
-            blocks: null,
         };
         this.timeLeft = 60; 
         this.margin = 19; //margen 
@@ -19,13 +17,20 @@ export class Game extends Scene {
 
     preload() {
         this.load.image("block", '/public/assets/cuadrado.png');
-        this.load.image('backg', '/public/assets/fondo.jpg');
+        this.load.image('backg', '/public/assets/fondo.jpg'); 
+        this.load.spritesheet('spritePP', 'public/assets/sprite-sheet.png', {
+            frameWidth: 166.6667,
+            frameHeight: 158,
+        });
     }
 
     create() {
         
         this.add.image('block');
         this.add.image(560,500,'backg').setScale(2);
+        this.player1.sprite = this.add.sprite(300, 385, 'spritePP').setScale(0.87); 
+        this.player2.sprite = this.add.sprite(900, 385, 'spritePP').setScale(0.87); 
+
 
         const screenWidth = this.game.config.width;
         const halfScreenWidth = screenWidth / 2;
@@ -38,15 +43,15 @@ export class Game extends Scene {
 
         //controles personalizados
         this.player1.controls = this.input.keyboard.addKeys({
-            PALA: 'A',  
-            PICO: 'W',  
-            HACHA: 'D'  
+            pala: 'A',  
+            pico: 'W',  
+            hacha: 'D'  
         });
 
         this.player2.controls = this.input.keyboard.addKeys({
-            PALA: 'LEFT',  
-            PICO: 'UP',    
-            HACHA: 'RIGHT' 
+            pala: 'LEFT',  
+            pico: 'UP',    
+            hacha: 'RIGHT' 
         });
 
        
@@ -66,6 +71,7 @@ export class Game extends Scene {
         this.input.keyboard.on('keydown', (event) => {
             this.handleKeyPress(event);
         });
+        
     }
 
     createBlocksForPlayer(player, startX, endX) {
@@ -84,24 +90,33 @@ export class Game extends Scene {
             }
         }
     }
+    
 
     handleKeyPress(event) {
         //teclas para el jugador 1
+        this.player1.sprite.play('PJ1_idle');
         if (event.key === 'a') {
             this.handleBlockRemoval(this.player1, 'pala');
+            this.player1.sprite.play('PJ1_pala');
         } else if (event.key === 'w') {
             this.handleBlockRemoval(this.player1, 'pico');
+            this.player1.sprite.play('PJ1_pico');
         } else if (event.key === 'd') {
             this.handleBlockRemoval(this.player1, 'hacha');
+            this.player1.sprite.play('PJ1_hacha');
         }
 
         //teclas para el jugador 2
+        this.player2.sprite.play('PJ2_idle');
         if (event.key === 'ArrowLeft') {
             this.handleBlockRemoval(this.player2, 'pala');
+            this.player2.sprite.play('PJ2_pala');
         } else if (event.key === 'ArrowUp') {
             this.handleBlockRemoval(this.player2, 'pico');
+            this.player2.sprite.play('PJ2_pico');
         } else if (event.key === 'ArrowRight') {
             this.handleBlockRemoval(this.player2, 'hacha');
+            this.player2.sprite.play('PJ2_hacha');
         }
     }
 
