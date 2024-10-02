@@ -20,6 +20,7 @@ export class Game extends Scene {
         this.timeLeft = 60
     }
 
+    
     preload() {
         this.load.image("block", '/public/assets/cuadrado.png');
         this.load.image('backg', '/public/assets/fondo.jpg'); 
