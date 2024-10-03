@@ -1,5 +1,38 @@
 import { Scene } from 'phaser';
 
+class Block {
+    constructor(scene, x, y, type, player) {
+        this.scene = scene;
+        this.player = player;
+        this.type = type;
+
+        let texture;
+        switch (type) {
+            case 'tierra':
+                texture = 'tierra';
+                this.keyremove = player === 1 ? 'a' : 'LEFT';
+                break;
+            case 'madera':
+                texture = 'madera';
+                this.keyremove = player === 1 ? 'd' : 'RIGHT';
+                break;
+            case 'piedra':
+                texture = 'piedra';
+                this.keyremove = player === 1 ? 'w' : 'UP';
+                break;
+            default:
+                texture = 'block'; // fallback
+                this.keyremove = '';
+        }
+
+        this.block = this.scene.physics.add.staticImage(x, y, texture).setScale(0.5).refreshBody();
+    }
+
+    destroy() {
+        this.block.destroy();
+    }
+}
+
 export class Game extends Scene {
 
     constructor() {
@@ -22,10 +55,13 @@ export class Game extends Scene {
 
     
     preload() {
-        this.load.image("block", '/public/assets/cuadrado.png');
+        this.load.image('block', '/public/assets/cuadrado.png');
+        this.load.image('tierra', '/public/assets/tierra.png');
+        this.load.image('madera', '/public/assets/madera.png');
+        this.load.image('piedra', '/public/assets/piedra.png');
         this.load.image('backg', '/public/assets/fondo.jpg'); 
         this.load.spritesheet('spritePP', 'public/assets/sprite-sheet.png', {
-            frameWidth: 166.6667,
+            frameWidth: 126,
             frameHeight: 158,
         });
     }
@@ -33,6 +69,9 @@ export class Game extends Scene {
     create() {
         
         this.add.image('block');
+        this.add.image('tierra').setScale(2);
+        this.add.image('madera').setScale(2);
+        this.add.image('piedra').setScale(1);
         this.add.image(560,500,'backg').setScale(2);
         this.player1.sprite = this.add.sprite(300, 385, 'spritePP').setScale(0.87); 
         this.player2.sprite = this.add.sprite(900, 385, 'spritePP').setScale(0.87); 
@@ -80,56 +119,62 @@ export class Game extends Scene {
         
     }
 
-    createBlocksForPlayer(player, startX, endX) {
-        player.blocks = this.physics.add.staticGroup();
-        const blockWidth = 95;
-        const blockHeight = 40;
+    createBlocksForPlayer(player, startX, endX, playerNumber) {
+        player.blocks = [];
+        const blockWidth = 50;
+        const blockHeight = 50;
         const numCols = Math.floor((endX - startX) / blockWidth);
         const numRows = 5;
-        const startY = this.game.config.height - (numRows * blockHeight); 
+        const startY = this.game.config.height - (numRows * blockHeight);
+
+        const blockTypes = ['tierra', 'madera', 'piedra'];
 
         for (let row = 0; row < numRows; row++) {
             for (let col = 0; col < numCols; col++) {
-                let blockX = startX + col * blockWidth + blockWidth / 1;
-                let blockY = startY + row * blockHeight;
-                player.blocks.create(blockX, blockY, 'block').setScale(0.5).refreshBody();
+                const blockX = startX + col * blockWidth + blockWidth / 2;
+                const blockY = startY + row * blockHeight;
+                const blockType = blockTypes[Phaser.Math.Between(0, 2)];  //aleatoriamente el tipo de bloque
+                const block = new Block(this, blockX, blockY, blockType, playerNumber);
+                player.blocks.push(block);
             }
         }
     }
-    
 
     handleKeyPress(event) {
         //teclas para el jugador 1
         this.player1.sprite.play('PJ1_idle');
+
         if (event.key === 'a') {
-            this.handleBlockRemoval(this.player1, 'pala');
+            this.handleBlockRemoval(this.player1, 'A');
             this.player1.sprite.play('PJ1_pala');
         } else if (event.key === 'w') {
-            this.handleBlockRemoval(this.player1, 'pico');
+            this.handleBlockRemoval(this.player1, 'W');
             this.player1.sprite.play('PJ1_pico');
         } else if (event.key === 'd') {
-            this.handleBlockRemoval(this.player1, 'hacha');
+            this.handleBlockRemoval(this.player1, 'D');
             this.player1.sprite.play('PJ1_hacha');
         }
 
         //teclas para el jugador 2
         this.player2.sprite.play('PJ2_idle');
+
         if (event.key === 'ArrowLeft') {
-            this.handleBlockRemoval(this.player2, 'pala');
+            this.handleBlockRemoval(this.player2, 'LEFT');
             this.player2.sprite.play('PJ2_pala');
         } else if (event.key === 'ArrowUp') {
-            this.handleBlockRemoval(this.player2, 'pico');
+            this.handleBlockRemoval(this.player2, 'UP');
             this.player2.sprite.play('PJ2_pico');
         } else if (event.key === 'ArrowRight') {
-            this.handleBlockRemoval(this.player2, 'hacha');
+            this.handleBlockRemoval(this.player2, 'RIGHT');
             this.player2.sprite.play('PJ2_hacha');
         }
     }
 
-    handleBlockRemoval(player, tool) {
-        let block = player.blocks.getFirstAlive(); //obtener el primer bloque "vivo"
-        if (block) {
-            block.destroy();
+    handleBlockRemoval(player, key) {
+        let blockToRemove = player.blocks.find(block => block.keyremove === key);
+        if (blockToRemove) {
+            blockToRemove.destroy();
+            player.blocks = player.blocks.filter(block => block !== blockToRemove);  // eliminar el bloque de la lista
             player.score += 10;
             player.scoreText.setText(`Score P${player === this.player1 ? 1 : 2}: ${player.score}`);
         }

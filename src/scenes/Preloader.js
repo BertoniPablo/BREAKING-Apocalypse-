@@ -30,7 +30,9 @@ export class Preloader extends Scene
     preload ()
     {
         this.load.setPath('assets');
-        this.load.image ('block', 'cuadrado.png');
+        this.load.image('tierra', 'tierra.png');
+        this.load.image('madera', 'madera.png');
+        this.load.image('piedra', 'piedra.png');
         this.load.image('logo', 'logo.png');
 
         this.load.image('langUSButton', 'langUS.png');
@@ -43,14 +45,13 @@ export class Preloader extends Scene
         this.load.image('background', 'fondo.jpg');
 
         this.load.spritesheet('spritePP', 'sprite-sheet.png', {
-            frameWidth: 166.6667,
+            frameWidth:126,
             frameHeight: 158,
         });
     }
 
     create ()
     {
-        
         //animación estática
         this.anims.create({
             key: 'PJ1_idle',
@@ -72,7 +73,7 @@ export class Preloader extends Scene
         })
         this.anims.create({
             key: "PJ2_pala", 
-            frames: this.anims.generateFrameNumbers("spritePP", {start: 13, end: 15}),
+            frames: this.anims.generateFrameNumbers("spritePP", {start: 13, end: 14}),
             frameRate: 10,
             repeat: 0,
         })
@@ -84,7 +85,7 @@ export class Preloader extends Scene
         })
         this.anims.create({
             key: "PJ2_pico", 
-            frames: this.anims.generateFrameNumbers("spritePP", {start: 16, end: 18}),
+            frames: this.anims.generateFrameNumbers("spritePP", {start: 15, end: 17}),
             frameRate: 10,
             repeat: 0,
         })
