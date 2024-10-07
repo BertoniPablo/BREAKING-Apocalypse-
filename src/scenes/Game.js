@@ -59,7 +59,6 @@ export class Game extends Scene {
         this.load.image('tierra', '/public/assets/tierra.png');
         this.load.image('madera', '/public/assets/madera.png');
         this.load.image('piedra', '/public/assets/piedra.png');
-        this.load.image('backg', '/public/assets/fondo.jpg'); 
         this.load.spritesheet('spritePP', 'public/assets/sprite-sheet.png', {
             frameWidth: 126,
             frameHeight: 158,
@@ -72,7 +71,7 @@ export class Game extends Scene {
         this.add.image('tierra').setScale(2);
         this.add.image('madera').setScale(2);
         this.add.image('piedra').setScale(1);
-        this.add.image(560,500,'backg').setScale(2);
+        this.add.image(580, 384, 'background').setScale(2);
         this.player1.sprite = this.add.sprite(300, 385, 'spritePP').setScale(0.87); 
         this.player2.sprite = this.add.sprite(900, 385, 'spritePP').setScale(0.87); 
 
