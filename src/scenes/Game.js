@@ -1,37 +1,49 @@
 import { Scene } from 'phaser';
 
-class Block {
+class Block extends Phaser.GameObjects.Sprite {
     constructor(scene, x, y, type, player) {
+        super(scene, x, y, 'blocks'); 
+
         this.scene = scene;
         this.player = player;
         this.type = type;
 
-        let texture;
+        let frame;
         switch (type) {
             case 'tierra':
-                texture = 'tierra';
+                frame = 1; 
                 this.keyremove = player === 1 ? 'a' : 'LEFT';
                 break;
             case 'madera':
-                texture = 'madera';
+                frame = 0; 
                 this.keyremove = player === 1 ? 'd' : 'RIGHT';
                 break;
             case 'piedra':
-                texture = 'piedra';
+                frame = 2; 
                 this.keyremove = player === 1 ? 'w' : 'UP';
                 break;
             default:
-                texture = 'block'; // fallback
+                frame = 0; 
                 this.keyremove = '';
         }
 
-        this.block = this.scene.physics.add.staticImage(x, y, texture).setScale(0.5).refreshBody();
-    }
+        
+        this.setFrame(frame);
+        this.setPosition(x, y);
+        this.setScale(0.5);
 
+        
+        this.scene.add.existing(this);
+
+        
+        this.scene.physics.add.existing(this);
+        this.body.setImmovable(true);
+    }
     destroy() {
-        this.block.destroy();
+        super.destroy();
     }
 }
+
 
 export class Game extends Scene {
 
@@ -40,10 +52,12 @@ export class Game extends Scene {
         this.player1 = {
             score: 0,
             controls: null,
+            blocks: []
         };
         this.player2 = {
             score: 0,
             controls: null,
+            blocks: []
         };
         this.timeLeft = 60; 
         this.margin = 19; //margen 
@@ -55,35 +69,40 @@ export class Game extends Scene {
 
     
     preload() {
-        this.load.image('block', '/public/assets/cuadrado.png');
-        this.load.image('tierra', '/public/assets/tierra.png');
-        this.load.image('madera', '/public/assets/madera.png');
-        this.load.image('piedra', '/public/assets/piedra.png');
-        this.load.spritesheet('spritePP', 'public/assets/sprite-sheet.png', {
-            frameWidth: 126,
+        this.load.spritesheet('blocksheet', 'public/assets/spriteBLOQUES.png', {
+            frameWidth: 113,
+            frameHeight: 112,
+        });
+        this.load.spritesheet('spriteP1', 'public/assets/sprite-sheetP1.png', {
+            frameWidth: 124,
             frameHeight: 158,
         });
+        this.load.spritesheet('spriteP2', 'public/assets/sprite-sheetP2.png', {
+            frameWidth: 124,
+            frameHeight: 158,
+        });
+        
     }
 
     create() {
         
-        this.add.image('block');
-        this.add.image('tierra').setScale(2);
-        this.add.image('madera').setScale(2);
-        this.add.image('piedra').setScale(1);
         this.add.image(580, 384, 'background').setScale(2);
-        this.player1.sprite = this.add.sprite(300, 385, 'spritePP').setScale(0.87); 
-        this.player2.sprite = this.add.sprite(900, 385, 'spritePP').setScale(0.87); 
+        this.player1.sprite = this.add.sprite(300, 385, 'spriteP1').setScale(0.87); 
+        this.player2.sprite = this.add.sprite(900, 385, 'spriteP2').setScale(0.87); 
 
-
+    
+        let blockTierra = new Block(this, 100, 200, 'tierra' );  
+        let blockMadera = new Block(this, 200, 200, 'madera' );  
+        let blockPiedra = new Block(this, 300, 200, 'piedra' );  
+    
         const screenWidth = this.game.config.width;
         const halfScreenWidth = screenWidth / 2;
 
         const player1EndX = halfScreenWidth - this.margin / 2;
         const player2StartX = halfScreenWidth + this.margin / 2.5;
 
-        this.createBlocksForPlayer(this.player1, 0, player1EndX); 
-        this.createBlocksForPlayer(this.player2, player2StartX, screenWidth); 
+        this.createBlocksForPlayer(this.player1, 0, player1EndX, 1); 
+        this.createBlocksForPlayer(this.player2, player2StartX, screenWidth, 2);
 
         //controles personalizados
         this.player1.controls = this.input.keyboard.addKeys({
@@ -116,6 +135,11 @@ export class Game extends Scene {
             this.handleKeyPress(event);
         });
         
+        this.physics.add.collider(this.player1.sprite, this.player1.blocks);
+        this.physics.add.collider(this.player2.sprite, this.player2.blocks);
+
+        // Colisiones con el límite inferior
+        this.physics.world.setBounds(0, 0, screenWidth, this.game.config.height - 50);
     }
 
     createBlocksForPlayer(player, startX, endX, playerNumber) {
@@ -134,15 +158,13 @@ export class Game extends Scene {
                 const blockY = startY + row * blockHeight;
                 const blockType = blockTypes[Phaser.Math.Between(0, 2)];  //aleatoriamente el tipo de bloque
                 const block = new Block(this, blockX, blockY, blockType, playerNumber);
-                player.blocks.push(block);
+                player.blocks.push(block); 
             }
         }
     }
 
     handleKeyPress(event) {
-        //teclas para el jugador 1
-        this.player1.sprite.play('PJ1_idle');
-
+        // teclas para el jugador 1
         if (event.key === 'a') {
             this.handleBlockRemoval(this.player1, 'A');
             this.player1.sprite.play('PJ1_pala');
@@ -152,11 +174,11 @@ export class Game extends Scene {
         } else if (event.key === 'd') {
             this.handleBlockRemoval(this.player1, 'D');
             this.player1.sprite.play('PJ1_hacha');
+        } else {
+            this.player1.sprite.play('PJ1_idle');
         }
-
-        //teclas para el jugador 2
-        this.player2.sprite.play('PJ2_idle');
-
+    
+        // teclas para el jugador 2
         if (event.key === 'ArrowLeft') {
             this.handleBlockRemoval(this.player2, 'LEFT');
             this.player2.sprite.play('PJ2_pala');
@@ -166,8 +188,11 @@ export class Game extends Scene {
         } else if (event.key === 'ArrowRight') {
             this.handleBlockRemoval(this.player2, 'RIGHT');
             this.player2.sprite.play('PJ2_hacha');
+        } else {
+            this.player2.sprite.play('PJ2_idle');
         }
     }
+    
 
     handleBlockRemoval(player, key) {
         let blockToRemove = player.blocks.find(block => block.keyremove === key);

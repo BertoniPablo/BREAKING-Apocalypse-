@@ -30,9 +30,6 @@ export class Preloader extends Scene
     preload ()
     {
         this.load.setPath('assets');
-        this.load.image('tierra', 'tierra.png');
-        this.load.image('madera', 'madera.png');
-        this.load.image('piedra', 'piedra.png');
         this.load.image('logo', 'logo.png');
 
         this.load.image('langUSButton', 'langUS.png');
@@ -42,10 +39,19 @@ export class Preloader extends Scene
         this.load.image('langBRButton', 'langBR.png');
 
         this.load.image('playButton', 'play.png');
-        this.load.image('background', 'fondo.jpg');
+        this.load.image('background', 'bg.png');
 
-        this.load.spritesheet('spritePP', 'sprite-sheet.png', {
-            frameWidth:126,
+        this.load.spritesheet('blocks', 'public/assets/spriteBLOQUES.png', {
+            frameWidth: 113,
+            frameHeight: 112,
+        });
+
+        this.load.spritesheet('spriteP1', 'sprite-sheetP1.png', {
+            frameWidth:124,
+            frameHeight: 158,
+        });
+        this.load.spritesheet('spriteP2', 'sprite-sheetP2.png', {
+            frameWidth:124,
             frameHeight: 158,
         });
     }
@@ -55,49 +61,49 @@ export class Preloader extends Scene
         //animación estática
         this.anims.create({
             key: 'PJ1_idle',
-            frames: [{ key: 'spritePP', frame: 8 }],  
+            frames: [{ key: 'spriteP1', frame: 8 }],  
             frameRate: 10,
             repeat: -1
         });
         this.anims.create({
             key: 'PJ2_idle',
-            frames: [{ key: 'spritePP', frame: 9 }],  
+            frames: [{ key: 'spriteP2', frame: 0 }],  
             frameRate: 10,
             repeat: -1
         });
         this.anims.create({
             key: "PJ1_pala", 
-            frames: this.anims.generateFrameNumbers("spritePP", {start: 6, end: 7}),
+            frames: this.anims.generateFrameNumbers("spriteP1", {start: 6, end: 7}),
             frameRate: 10,
             repeat: 0,
         })
         this.anims.create({
             key: "PJ2_pala", 
-            frames: this.anims.generateFrameNumbers("spritePP", {start: 13, end: 14}),
+            frames: this.anims.generateFrameNumbers("spriteP2", {start: 4, end: 5}),
             frameRate: 10,
             repeat: 0,
         })
         this.anims.create({
             key: "PJ1_pico", 
-            frames: this.anims.generateFrameNumbers("spritePP", {start: 0, end: 2 }),
+            frames: this.anims.generateFrameNumbers("spriteP1", {start: 0, end: 2 }),
             frameRate: 10,
             repeat: 0,
         })
         this.anims.create({
             key: "PJ2_pico", 
-            frames: this.anims.generateFrameNumbers("spritePP", {start: 15, end: 17}),
+            frames: this.anims.generateFrameNumbers("spriteP2", {start: 6, end: 8}),
             frameRate: 10,
             repeat: 0,
         })
         this.anims.create({
             key: "PJ1_hacha", 
-            frames: this.anims.generateFrameNumbers("spritePP", {start: 3, end:5 }),
+            frames: this.anims.generateFrameNumbers("spriteP1", {start: 3, end:5 }),
             frameRate: 10,
             repeat: 0,
         })
         this.anims.create({
             key: "PJ2_hacha", 
-            frames: this.anims.generateFrameNumbers("spritePP", {start:10 , end:12 }),
+            frames: this.anims.generateFrameNumbers("spriteP2", {start:1 , end:3 }),
             frameRate: 10,
             repeat: 0,
         })
