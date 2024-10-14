@@ -1,6 +1,7 @@
 import { Boot } from './scenes/Boot';
 import { Game } from './scenes/Game';
-import {Lobby} from './scenes/Lobby';
+import { Lobby } from './scenes/Lobby';
+import { GameCo } from './scenes/GameCo';
 import { GameOver } from './scenes/GameOver';
 import { MainMenu } from './scenes/MainMenu';
 import { Preloader } from './scenes/Preloader';
@@ -29,6 +30,7 @@ const config = {
         Preloader,
         MainMenu,
         Lobby,
+        GameCo,
         Game,
         GameOver
     ]

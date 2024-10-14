@@ -22,7 +22,7 @@ export class MainMenu extends Scene
         });
 
         this.playButton.on('pointerdown', () => {
-            this.scene.start('Game');
+            this.scene.start('Lobby');
         });
 
         this.langUSButton = this.add.image(620, 550, "langUSButton").setInteractive().setScale(0.5).setVisible(true);
