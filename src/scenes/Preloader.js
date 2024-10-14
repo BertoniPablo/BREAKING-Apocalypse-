@@ -41,17 +41,17 @@ export class Preloader extends Scene
         this.load.image('playButton', 'play.png');
         this.load.image('background', 'bg.png');
 
-        this.load.spritesheet('blocks', 'public/assets/spriteBLOQUES.png', {
+        this.load.spritesheet('blocks', 'spriteBLOQUES.png', {
             frameWidth: 113,
-            frameHeight: 112,
+            frameHeight: 113,
         });
 
         this.load.spritesheet('spriteP1', 'sprite-sheetP1.png', {
-            frameWidth:124,
+            frameWidth:122.77778,
             frameHeight: 158,
         });
         this.load.spritesheet('spriteP2', 'sprite-sheetP2.png', {
-            frameWidth:124,
+            frameWidth:122.77778,
             frameHeight: 158,
         });
     }

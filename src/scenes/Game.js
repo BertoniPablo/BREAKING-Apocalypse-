@@ -7,7 +7,7 @@ class Block extends Phaser.GameObjects.Sprite {
         this.scene = scene;
         this.player = player;
         this.type = type;
-
+        
         let frame;
         switch (type) {
             case 'tierra':
@@ -27,23 +27,19 @@ class Block extends Phaser.GameObjects.Sprite {
                 this.keyremove = '';
         }
 
-        
         this.setFrame(frame);
         this.setPosition(x, y);
         this.setScale(0.5);
 
-        
         this.scene.add.existing(this);
-
+        this.scene.physics.add.existing(this, true); //blocks estáticos
         
-        this.scene.physics.add.existing(this);
-        this.body.setImmovable(true);
     }
+
     destroy() {
         super.destroy();
     }
 }
-
 
 export class Game extends Scene {
 
@@ -63,37 +59,21 @@ export class Game extends Scene {
         this.margin = 19; //margen 
     }
     
-    init(){
-        this.timeLeft = 60
-    }
-
-    
-    preload() {
-        this.load.spritesheet('blocksheet', 'public/assets/spriteBLOQUES.png', {
-            frameWidth: 113,
-            frameHeight: 112,
-        });
-        this.load.spritesheet('spriteP1', 'public/assets/sprite-sheetP1.png', {
-            frameWidth: 124,
-            frameHeight: 158,
-        });
-        this.load.spritesheet('spriteP2', 'public/assets/sprite-sheetP2.png', {
-            frameWidth: 124,
-            frameHeight: 158,
-        });
-        
+    init() {
+        this.timeLeft = 60;
     }
 
     create() {
-        
-        this.add.image(580, 384, 'background').setScale(2);
-        this.player1.sprite = this.add.sprite(300, 385, 'spriteP1').setScale(0.87); 
-        this.player2.sprite = this.add.sprite(900, 385, 'spriteP2').setScale(0.87); 
 
-    
-        let blockTierra = new Block(this, 100, 200, 'tierra' );  
-        let blockMadera = new Block(this, 200, 200, 'madera' );  
-        let blockPiedra = new Block(this, 300, 200, 'piedra' );  
+        this.add.image(580, 384, 'background').setScale(2);
+        this.player1.sprite = this.physics.add.sprite(300, 385, 'spriteP1').setScale(0.87);
+        this.player2.sprite = this.physics.add.sprite(900, 385, 'spriteP2').setScale(0.87);
+
+        //comportamientos players
+        this.player1.sprite.body.setGravityY(300); 
+        this.player2.sprite.body.setGravityY(300); 
+        this.player1.sprite.setCollideWorldBounds(true);
+        this.player2.sprite.setCollideWorldBounds(true);
     
         const screenWidth = this.game.config.width;
         const halfScreenWidth = screenWidth / 2;
@@ -101,16 +81,17 @@ export class Game extends Scene {
         const player1EndX = halfScreenWidth - this.margin / 2;
         const player2StartX = halfScreenWidth + this.margin / 2.5;
 
-        this.createBlocksForPlayer(this.player1, 0, player1EndX, 1); 
+        this.createBlocksForPlayer(this.player1, 0, player1EndX, 1);
         this.createBlocksForPlayer(this.player2, player2StartX, screenWidth, 2);
 
-        //controles personalizados
+        this.setColliders();
+        
+        //controles perso
         this.player1.controls = this.input.keyboard.addKeys({
-            pala: 'A',  
-            pico: 'W',  
-            hacha: 'D'  
+            pala: 'a',  
+            pico: 'w',  
+            hacha: 'd'  
         });
-
         this.player2.controls = this.input.keyboard.addKeys({
             pala: 'LEFT',  
             pico: 'UP',    
@@ -119,9 +100,8 @@ export class Game extends Scene {
 
        
         this.player1.scoreText = this.add.text(10, 10, `Score P1: ${this.player1.score}`, { fontSize: '32px', fill: '#ffffff' });
-        this.player2.scoreText = this.add.text(this.game.config.width - 260, 10, `Score P2: ${this.player2.score}`, { fontSize: '32px', fill: '#ffffff' });
+        this.player2.scoreText = this.add.text(this.game.config.width - 270, 10, `Score P2: ${this.player2.score}`, { fontSize: '32px', fill: '#ffffff' });
 
-        
         this.timerText = this.add.text(500, 10, `Time: ${this.timeLeft}`, { fontSize: '32px', fill: '#ffffff' });
         this.timerEvent = this.time.addEvent({
             delay: 1000,
@@ -129,21 +109,15 @@ export class Game extends Scene {
             callbackScope: this,
             loop: true
         });
-
-        //eventos de teclado
+       
         this.input.keyboard.on('keydown', (event) => {
             this.handleKeyPress(event);
         });
-        
-        this.physics.add.collider(this.player1.sprite, this.player1.blocks);
-        this.physics.add.collider(this.player2.sprite, this.player2.blocks);
-
-        // Colisiones con el límite inferior
-        this.physics.world.setBounds(0, 0, screenWidth, this.game.config.height - 50);
     }
 
     createBlocksForPlayer(player, startX, endX, playerNumber) {
         player.blocks = [];
+        
         const blockWidth = 50;
         const blockHeight = 50;
         const numCols = Math.floor((endX - startX) / blockWidth);
@@ -156,29 +130,40 @@ export class Game extends Scene {
             for (let col = 0; col < numCols; col++) {
                 const blockX = startX + col * blockWidth + blockWidth / 2;
                 const blockY = startY + row * blockHeight;
-                const blockType = blockTypes[Phaser.Math.Between(0, 2)];  //aleatoriamente el tipo de bloque
+                const blockType = blockTypes[Phaser.Math.Between(0, 2)];  
                 const block = new Block(this, blockX, blockY, blockType, playerNumber);
-                player.blocks.push(block); 
+                player.blocks.push(block);
             }
         }
     }
 
+    setColliders() {
+        
+        this.physics.add.collider(this.player1.sprite, this.player2.sprite);
+
+        this.player1.blocks.forEach(block => {
+            this.physics.add.collider(this.player1.sprite, block);
+        });
+        this.player2.blocks.forEach(block => {
+            this.physics.add.collider(this.player2.sprite, block);
+        });
+    }
+
     handleKeyPress(event) {
-        // teclas para el jugador 1
+       
         if (event.key === 'a') {
-            this.handleBlockRemoval(this.player1, 'A');
+            this.handleBlockRemoval(this.player1, 'a');
             this.player1.sprite.play('PJ1_pala');
         } else if (event.key === 'w') {
-            this.handleBlockRemoval(this.player1, 'W');
+            this.handleBlockRemoval(this.player1, 'w');
             this.player1.sprite.play('PJ1_pico');
         } else if (event.key === 'd') {
-            this.handleBlockRemoval(this.player1, 'D');
+            this.handleBlockRemoval(this.player1, 'd');
             this.player1.sprite.play('PJ1_hacha');
         } else {
             this.player1.sprite.play('PJ1_idle');
         }
     
-        // teclas para el jugador 2
         if (event.key === 'ArrowLeft') {
             this.handleBlockRemoval(this.player2, 'LEFT');
             this.player2.sprite.play('PJ2_pala');
@@ -192,13 +177,34 @@ export class Game extends Scene {
             this.player2.sprite.play('PJ2_idle');
         }
     }
-    
 
     handleBlockRemoval(player, key) {
         let blockToRemove = player.blocks.find(block => block.keyremove === key);
         if (blockToRemove) {
+            //guardar posición del bloque
+            const x = blockToRemove.x;
+            const y = blockToRemove.y;
+            const currentType = blockToRemove.type;
+    
             blockToRemove.destroy();
-            player.blocks = player.blocks.filter(block => block !== blockToRemove);  // eliminar el bloque de la lista
+            player.blocks = player.blocks.filter(block => block !== blockToRemove);  
+            const blockTypes = ['tierra', 'madera', 'piedra'];
+            let newType = currentType;
+            
+            while (newType === currentType) {
+                newType = blockTypes[Phaser.Math.Between(0, blockTypes.length - 1)];
+            }
+    
+            //regenerar bloque aleatorio 
+            this.time.addEvent({
+                delay: 9000,  
+                callback: () => {
+                    const newBlock = new Block(this, x, y, newType, player === this.player1 ? 1 : 2);
+                    player.blocks.push(newBlock);
+                },
+                callbackScope: this
+            });
+    
             player.score += 10;
             player.scoreText.setText(`Score P${player === this.player1 ? 1 : 2}: ${player.score}`);
         }
