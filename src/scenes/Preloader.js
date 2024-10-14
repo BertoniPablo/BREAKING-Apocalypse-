@@ -41,6 +41,9 @@ export class Preloader extends Scene
         this.load.image('playButton', 'play.png');
         this.load.image('background', 'bg.png');
 
+        this.load.image('VS', 'versus.png');
+        this.load.image('COP', 'coop.png');
+
         this.load.spritesheet('blocks', 'spriteBLOQUES.png', {
             frameWidth: 113,
             frameHeight: 113,

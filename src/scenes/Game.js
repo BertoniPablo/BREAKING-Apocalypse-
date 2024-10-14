@@ -34,6 +34,7 @@ class Block extends Phaser.GameObjects.Sprite {
         this.scene.add.existing(this);
         this.scene.physics.add.existing(this, true); //blocks estáticos
         
+        
     }
 
     destroy() {
@@ -70,10 +71,12 @@ export class Game extends Scene {
         this.player2.sprite = this.physics.add.sprite(900, 385, 'spriteP2').setScale(0.87);
 
         //comportamientos players
-        this.player1.sprite.body.setGravityY(300); 
-        this.player2.sprite.body.setGravityY(300); 
+        
         this.player1.sprite.setCollideWorldBounds(true);
         this.player2.sprite.setCollideWorldBounds(true);
+
+        this.player1.sprite.body.setGravityY(400); 
+        this.player2.sprite.body.setGravityY(400); 
     
         const screenWidth = this.game.config.width;
         const halfScreenWidth = screenWidth / 2;
@@ -90,12 +93,14 @@ export class Game extends Scene {
         this.player1.controls = this.input.keyboard.addKeys({
             pala: 'a',  
             pico: 'w',  
-            hacha: 'd'  
+            hacha: 'd',  
+            jump: 'SPACE'
         });
         this.player2.controls = this.input.keyboard.addKeys({
             pala: 'LEFT',  
             pico: 'UP',    
-            hacha: 'RIGHT' 
+            hacha: 'RIGHT',
+            jump: 'SHIFT' 
         });
 
        
@@ -113,6 +118,38 @@ export class Game extends Scene {
         this.input.keyboard.on('keydown', (event) => {
             this.handleKeyPress(event);
         });
+    }
+
+    update() {
+        if (this.player1.controls.jump.isDown && this.player1.sprite.body.touching.down) {
+            this.player1.sprite.setVelocityY(-400); 
+        }
+        if (this.player2.controls.jump.isDown && this.player2.sprite.body.touching.down) {
+            this.player2.sprite.setVelocityY(-400); 
+        }
+
+        //detecta la primer columna de cada jugador
+        this.checkClosestColumn(this.player1); 
+        this.checkClosestColumn(this.player2);
+    }
+
+    checkClosestColumn(player) {
+        let closestBlock = null;
+        let minDistance = Infinity;
+    
+        player.blocks.forEach(block => {
+            // Calculamos la distancia horizontal (eje X) entre el jugador y el bloque
+            const distanceX = Math.abs(player.sprite.x - block.x);
+    
+            // Verificamos si el bloque está más cerca que el bloque más cercano encontrado hasta ahora
+            if (distanceX < minDistance && block.y < player.sprite.y) {
+                minDistance = distanceX;
+                closestBlock = block;
+            }
+        });
+        if (closestBlock) {
+            this.physics.add.collider(player.sprite, closestBlock);
+        }
     }
 
     createBlocksForPlayer(player, startX, endX, playerNumber) {
@@ -137,15 +174,24 @@ export class Game extends Scene {
         }
     }
 
+    handleLanding(playerSprite, block) {
+        if (playerSprite.body.touching.down) {
+            // El jugador ha aterrizado en un bloque
+            console.log(`Jugador aterrizó sobre un bloque de tipo: ${block.type}`);
+            
+            // Aquí puedes añadir cualquier lógica adicional, como restar puntos, etc.
+        }
+    }
+    
     setColliders() {
-        
+
         this.physics.add.collider(this.player1.sprite, this.player2.sprite);
 
         this.player1.blocks.forEach(block => {
-            this.physics.add.collider(this.player1.sprite, block);
+            this.physics.add.collider(this.player1.sprite, block, this.handleLanding, null, this);
         });
         this.player2.blocks.forEach(block => {
-            this.physics.add.collider(this.player2.sprite, block);
+            this.physics.add.collider(this.player2.sprite, block, this.handleLanding, null, this);
         });
     }
 
@@ -194,7 +240,7 @@ export class Game extends Scene {
             while (newType === currentType) {
                 newType = blockTypes[Phaser.Math.Between(0, blockTypes.length - 1)];
             }
-    
+            
             //regenerar bloque aleatorio 
             this.time.addEvent({
                 delay: 9000,  
@@ -219,7 +265,5 @@ export class Game extends Scene {
         }
     }
 
-    update() {
-       //
-    }
+    
 }
