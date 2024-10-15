@@ -10,18 +10,31 @@ export class Lobby extends Scene
     create ()
     {
         this.add.image(580, 384, 'background').setScale(2);
+
+
     
         this.VSButton = this.add.image(580, 300, "VS").setInteractive().setScale(1).setVisible(true);
         this.VSButton.on('pointerover', () => {
             this.VSButton.setScale(0.97);
         });
-
         this.VSButton.on('pointerout', () => {
             this.VSButton.setScale(1);
         });
 
         this.VSButton.on('pointerdown', () => {
             this.scene.start('Game');
+        });
+
+        this.backButton = this.add.image(40,40, 'back').setInteractive().setScale(0.19).setVisible(true);
+        this.backButton.on('pointerover', () => {
+            this.backButton.setScale(0.18);
+        });
+        this.backButton.on('pointerout', () => {
+            this.backButton.setScale(0.19);
+        });
+
+        this.backButton.on('pointerdown', () => {
+            this.scene.start('MainMenu');
         });
 
         this.COPButton = this.add.image(600, 550, "COP").setInteractive().setScale(0.9).setVisible(true);

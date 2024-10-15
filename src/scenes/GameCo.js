@@ -2,13 +2,17 @@ import {Scene} from 'phaser' ;
 
 export class GameCo extends Scene
 {
-    constructor ()
-    {
+    constructor (){
         super ('GameCo');
+        this.madera = 0
+        this.piedra = 0
+        this.metal = 0
+
     }
     
+    
     create (){
-        this.add.image('background').setScale(2);
+        this.add.image(512, 384, 'mapa');
     }
 
     update(){

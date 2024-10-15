@@ -56,12 +56,12 @@ export class Game extends Scene {
             controls: null,
             blocks: []
         };
-        this.timeLeft = 60; 
+        this.timeLeft = 10; 
         this.margin = 19; //margen 
     }
     
     init() {
-        this.timeLeft = 60;
+        this.timeLeft = 10;
     }
 
     create() {
@@ -206,8 +206,6 @@ export class Game extends Scene {
         } else if (event.key === 'd') {
             this.handleBlockRemoval(this.player1, 'd');
             this.player1.sprite.play('PJ1_hacha');
-        } else {
-            this.player1.sprite.play('PJ1_idle');
         }
     
         if (event.key === 'ArrowLeft') {
@@ -219,9 +217,7 @@ export class Game extends Scene {
         } else if (event.key === 'ArrowRight') {
             this.handleBlockRemoval(this.player2, 'RIGHT');
             this.player2.sprite.play('PJ2_hacha');
-        } else {
-            this.player2.sprite.play('PJ2_idle');
-        }
+        } 
     }
 
     handleBlockRemoval(player, key) {
