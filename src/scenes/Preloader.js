@@ -46,6 +46,17 @@ export class Preloader extends Scene
         this.load.image('COP', 'coop.png');
 
         this.load.image ('mapa','mapacop.jpeg');
+        
+        this.load.spritesheet('player1','player1sprite.png', {
+           frameWidth: 124,
+           frameHeight: 158,
+        });
+
+        this.load.spritesheet('player2','player2sprite.png', {
+            frameWidth: 124,
+            frameHeight: 158,
+        });
+        
 
         this.load.spritesheet('blocks', 'spriteBLOQUES.png', {
             frameWidth: 113,
@@ -53,7 +64,7 @@ export class Preloader extends Scene
         });
 
         this.load.spritesheet('spriteP1', 'sprite-sheetP1.png', {
-            frameWidth:136.3636,
+            frameWidth:135,
             frameHeight: 158,
         });
         this.load.spritesheet('spriteP2', 'sprite-sheetP2.png', {
@@ -65,7 +76,6 @@ export class Preloader extends Scene
     create ()
     {
         //animación estática
-       
         this.anims.create({
             key: "PJ1_pala", 
             frames: this.anims.generateFrameNumbers("spriteP1", {start: 8, end: 10}),

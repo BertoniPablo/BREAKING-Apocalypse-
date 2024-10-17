@@ -62,6 +62,12 @@ export class Game extends Scene {
     
     init() {
         this.timeLeft = 10;
+        this.player1 = {
+            score: 0,
+        }
+        this.player2 = {
+            score: 0,
+        }
     }
 
     create() {
@@ -257,9 +263,24 @@ export class Game extends Scene {
         this.timerText.setText(`Time: ${this.timeLeft}`);
         if (this.timeLeft <= 0) {
             this.timerEvent.remove();
-            this.scene.start('GameOver');
+        
+
+            //determinar qn ganó
+         let winner;
+            if (this.player1.score > this.player2.score) {
+             winner = 'Player 1 WINS';
+            } else if (this.player2.score > this.player1.score) {
+             winner = 'Player 2 WINS';
+            } else {
+                winner = 'It\'s a TIE';
+            }
+
+            this.scene.start('GameOver', { 
+                scoreP1: this.player1.score, 
+                scoreP2: this.player2.score, 
+                winner: winner 
+            });
         }
     }
-
     
 }
