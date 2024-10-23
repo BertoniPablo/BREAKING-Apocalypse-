@@ -9,7 +9,7 @@ export class GameCo extends Scene {
         this.vidaIp2 = 3;
         this.posicionp1 = { x: 300, y: 385 };
         this.posicionp2 = { x: 900, y: 385 };
-        this.enContador = true;
+        this.enContador = false;
         this.move = true;
         this.cooldown = false; //cooldown
         this.madera = 0;
@@ -67,8 +67,7 @@ export class GameCo extends Scene {
     }
 
     update() {
-        console.log("puedeMoverse:", this.puedeMoverse, "enContador:", this.enContador);
-
+        
         if (!this.puedeMoverse || this.enContador) {
             return;
         }
