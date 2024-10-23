@@ -56,12 +56,12 @@ export class Game extends Scene {
             controls: null,
             blocks: []
         };
-        this.timeLeft = 10; 
+        this.timeLeft = 20; 
         this.margin = 19; //margen 
     }
     
     init() {
-        this.timeLeft = 10;
+        this.timeLeft = 20;
         this.player1 = {
             score: 0,
         }
