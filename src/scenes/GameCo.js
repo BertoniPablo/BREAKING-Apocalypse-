@@ -1,5 +1,67 @@
 import { Scene } from 'phaser';
 
+class Zombie extends Phaser.GameObjects.Sprite {
+    constructor(scene, x, y, type, player) {
+        super(scene, x, y, 'zombie_idle');  
+
+        this.scene = scene;
+        this.player = player; 
+        this.type = type;
+
+        this.scene.add.existing(this);
+        this.scene.physics.add.existing(this);
+        this.setCollideWorldBounds(true);
+
+        //tipos de zombies
+        switch (type) {
+            case 'zombie1':
+                this.speed = 50;   
+                this.health = 3;   
+                this.anims.play('zombie1_walk');  
+                break;
+            case 'zombie2':
+                this.speed = 100;  
+                this.health = 5;   
+                this.anims.play('zombie2_walk');  
+                break;
+            case 'zombie3':
+                this.speed = 150;  
+                this.health = 7;  
+                this.anims.play('zombie3_walk');  
+                break;
+            default:
+                this.speed = 50;
+                this.health = 3;
+                this.anims.play('zombie1_walk');
+                break;
+        }
+
+        this.startMoving();
+    }
+
+    startMoving() {
+        this.scene.physics.moveToObject(this, this.player, this.speed);
+    }
+
+    update() {
+
+        if (this.health <= 0) {
+            this.destroy();
+        }
+    }
+
+    receiveDamage(damage) {
+        this.health -= damage;
+        if (this.health <= 0) {
+            this.destroy();
+        }
+    }
+
+    destroy() {
+        super.destroy();
+    }
+}
+
 export class GameCo extends Scene {
     constructor() {
         super('GameCo');
@@ -18,18 +80,11 @@ export class GameCo extends Scene {
         this.puedeMoverse = true; //movimiento
     }
 
-    preload() {
-       
-        this.load.image('mapa', 'path/to/mapa.png');
-        this.load.spritesheet('player1', 'path/to/player1sprite.png', { frameWidth: 64, frameHeight: 64 });
-        this.load.spritesheet('player2', 'path/to/player2sprite.png', { frameWidth: 64, frameHeight: 64 });
-    }
-
     create() {
         
         this.add.image(550, 384, 'mapa');
 
-        
+        //personajes
         this.p1 = this.physics.add.sprite(this.posicionp1.x, this.posicionp1.y, 'player1');
         this.p1.setScale(0.41);
         this.p1.setBounce(0);
@@ -42,7 +97,13 @@ export class GameCo extends Scene {
         this.p2.setCollideWorldBounds(true);
         this.p2.play('p2_idle');
 
-        
+        //zombies
+        this.zombie1 = new Zombie(this, 100, 100, 'zombie1', this.player1);
+        this.zombie2 = new Zombie(this, 300, 200, 'zombie2', this.player2);
+        this.zombie3 = new Zombie(this, 500, 300, 'zombie3', this.player1);
+
+        this.zombies = this.physics.add.group([this.zombie1, this.zombie2, this.zombie3]);
+
         
         this.p1.controls = this.input.keyboard.addKeys({
             LEFT: 'A',
@@ -58,9 +119,10 @@ export class GameCo extends Scene {
             DOWN: 'DOWN'
         });
 
-        
+        //colisiones
         this.physics.add.collider(this.p1, this.p2);
-
+        this.physics.add.collider(this.player1, this.zombies, this.onPlayerHit, null, this);
+        this.physics.add.collider(this.player2, this.zombies, this.onPlayerHit, null, this);
         
         this.input.keyboard.on('keydown', (event) => this.handleKeyPress(event));
         this.input.keyboard.on('keyup', (event) => this.handleKeyRelease(event));
@@ -68,6 +130,11 @@ export class GameCo extends Scene {
 
     update() {
         
+        //actualiza los zombies
+        this.zombies.children.iterate(zombie => {
+            zombie.update();  
+        });
+
         if (!this.puedeMoverse || this.enContador) {
             return;
         }
@@ -134,6 +201,7 @@ export class GameCo extends Scene {
         if (!isP2Moving) {
             this.p2.anims.play('p2_idle', true);  //repite idle
         }
+
     }
     
 
@@ -182,6 +250,11 @@ export class GameCo extends Scene {
         this.time.delayedCall(350, () => {
             this.cooldownP2 = false;
         });
+    }
+
+    onPlayerHit(player, zombie) {
+        player.takeDamage(1);  
+        zombie.receiveDamage(1);  
     }
 
 }

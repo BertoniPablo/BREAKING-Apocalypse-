@@ -30,53 +30,82 @@ export class Preloader extends Scene
     preload ()
     {
         this.load.setPath('assets');
-        this.load.image('logo', 'logo.png');
+        this.load.image('logo', 'menu/logo.png');
 
-        this.load.image('langUSButton', 'langUS.png');
-        this.load.image('langARButton', 'langAR.png');
-        this.load.image('langFRButton', 'langFR.png');
-        this.load.image('langITButton', 'langIT.png');
-        this.load.image('langBRButton', 'langBR.png');
+        this.load.image('langUSButton', 'menu/langUS.png');
+        this.load.image('langARButton', 'menu/langAR.png');
+        this.load.image('langFRButton', 'menu/langFR.png');
+        this.load.image('langITButton', 'menu/langIT.png');
+        this.load.image('langBRButton', 'menu/langBR.png');
 
-        this.load.image('playButton', 'play.png');
-        this.load.image('background', 'bg.png');
+        this.load.image('playButton', 'menu/play.png');
+        this.load.image('background', 'menu/bg.png');
 
-        this.load.image('back', 'backboton.png');
-        this.load.image('VS', 'versus.png');
-        this.load.image('COP', 'coop.png');
+        this.load.image('back', 'lobby/backboton.png');
+        this.load.image('VS', 'lobby/versus.png');
+        this.load.image('COP', 'lobby/coop.png');
 
-        this.load.image ('mapa','mapacop.jpeg');
+        this.load.image ('mapa','cooperativo/mapacop.jpeg');
         
+        //cooperativo
 
-        this.load.spritesheet('P1-idle', 'player1-idle.png', {
+        //players
+        this.load.spritesheet('P1-idle', 'cooperativo/player1-idle.png', {
             frameWidth: 130,
             frameHeight: 158,
         });
-        this.load.spritesheet('P2-idle', 'player2-idle.png', {
+        this.load.spritesheet('P2-idle', 'cooperativo/player2-idle.png', {
             frameWidth: 130,
             frameHeight: 158,
         });
 
-        this.load.spritesheet('player1','player1sprite.png', {
+        this.load.spritesheet('player1','cooperativo/player1sprite.png', {
            frameWidth: 125,
            frameHeight: 158,
         });
-        this.load.spritesheet('player2','player2sprite.png', {
+        this.load.spritesheet('player2','cooperativo/player2sprite.png', {
             frameWidth: 125,
             frameHeight: 158,
         });
-        
 
-        this.load.spritesheet('blocks', 'spriteBLOQUES.png', {
+        //zombies
+        this.load.spritesheet('z1_idle', '', {
+            frameWidth: 130,
+            frameHeight: 158,
+        });
+        this.load.spritesheet('zombie1', '', {
+            frameWidth: 130,
+            frameHeight: 158,
+        });
+        this.load.spritesheet('z2_idle', '', {
+            frameWidth: 130,
+            frameHeight: 158,
+        });
+        this.load.spritesheet('zombie2', '', {
+            frameWidth: 130,
+            frameHeight: 158,
+        });
+        this.load.spritesheet('z3_idle','cooperativo/zombie3-idle.png', {
+            frameWidth: 115,
+            frameHeight: 170,
+        });
+        this.load.spritesheet('zombie3','cooperativo/zombie3-Sheet.png', {
+            frameWidth: 130,
+            frameHeight: 170,
+        });
+
+
+        //versus
+        this.load.spritesheet('blocks', 'versus/spriteBLOQUES.png', {
             frameWidth: 113,
             frameHeight: 113,
         });
 
-        this.load.spritesheet('spriteP1', 'sprite-sheetP1.png', {
+        this.load.spritesheet('spriteP1', 'versus/sprite-sheetP1.png', {
             frameWidth:135,
             frameHeight: 158,
         });
-        this.load.spritesheet('spriteP2', 'sprite-sheetP2.png', {
+        this.load.spritesheet('spriteP2', 'versus/sprite-sheetP2.png', {
             frameWidth:136.3636,
             frameHeight: 158,
         });
@@ -85,6 +114,8 @@ export class Preloader extends Scene
     create ()
     {
         //animaciones coop
+
+        //pjs
         this.anims.create({
             key: 'p1_idle',
             frames: this.anims.generateFrameNumbers('P1-idle', { start: 0, end: 2 }),  
@@ -148,6 +179,25 @@ export class Preloader extends Scene
             repeat: -1,
         })
        
+        //zombies
+        this.anims.create({
+            key: 'zombie1_walk',
+            frames: this.anims.generateFrameNumbers('zombie1', {start: 0, end: 7}),
+            frameRate: 10,
+            repeat: -1,
+        })
+        this.anims.create({
+            key: 'zombie2_walk',
+            frames: this.anims.generateFrameNumbers('zombie2', {start: 0, end: 7}),
+            frameRate: 10,
+            repeat: -1,
+        })
+        this.anims.create({
+            key: 'zombie3_walk',
+            frames: this.anims.generateFrameNumbers('zombie3', {start: 0, end: 7}),
+            frameRate: 10,
+            repeat: -1,
+        })
 
         //animaciones vs
          

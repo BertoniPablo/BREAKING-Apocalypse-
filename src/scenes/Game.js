@@ -73,11 +73,10 @@ export class Game extends Scene {
     create() {
 
         this.add.image(580, 384, 'background').setScale(2);
-        this.player1.sprite = this.physics.add.sprite(300, 385, 'spriteP1').setScale(0.87);
-        this.player2.sprite = this.physics.add.sprite(900, 385, 'spriteP2').setScale(0.87);
+        this.player1.sprite = this.physics.add.sprite(300, 385, 'P1-idle').setScale(0.87);
+        this.player2.sprite = this.physics.add.sprite(900, 385, 'P2-idle').setScale(0.87);
 
         //comportamientos players
-        
         this.player1.sprite.setCollideWorldBounds(true);
         this.player2.sprite.setCollideWorldBounds(true);
 
@@ -182,10 +181,9 @@ export class Game extends Scene {
 
     handleLanding(playerSprite, block) {
         if (playerSprite.body.touching.down) {
-            // El jugador ha aterrizado en un bloque
+            //jugador aterrizo en un bloque
             console.log(`Jugador aterrizó sobre un bloque de tipo: ${block.type}`);
             
-            // Aquí puedes añadir cualquier lógica adicional, como restar puntos, etc.
         }
     }
     
