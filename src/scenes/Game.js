@@ -73,6 +73,7 @@ export class Game extends Scene {
     create() {
 
         this.add.image(580, 384, 'background').setScale(2);
+        this.add.image(575, 384, 'uixvs');
         this.player1.sprite = this.physics.add.sprite(300, 385, 'P1-idle').setScale(0.87);
         this.player2.sprite = this.physics.add.sprite(900, 385, 'P2-idle').setScale(0.87);
 

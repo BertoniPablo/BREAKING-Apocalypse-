@@ -35,17 +35,20 @@ export class Preloader extends Scene
         this.load.image('langUSButton', 'menu/langUS.png');
         this.load.image('langARButton', 'menu/langAR.png');
         this.load.image('langFRButton', 'menu/langFR.png');
-        this.load.image('langITButton', 'menu/langIT.png');
+        this.load.image('langALButton', 'menu/langAL.png');
         this.load.image('langBRButton', 'menu/langBR.png');
 
         this.load.image('playButton', 'menu/play.png');
-        this.load.image('background', 'menu/bg.png');
+        this.load.image('background', 'bg.jpeg');
 
         this.load.image('back', 'lobby/backboton.png');
         this.load.image('VS', 'lobby/versus.png');
         this.load.image('COP', 'lobby/coop.png');
 
         this.load.image ('mapa','cooperativo/mapacop.jpeg');
+        this.load.image ('uixcop', 'cooperativo/uixCOP.png');
+
+        this.load.image ('uixvs', 'versus/uixVS.png');
         
         //cooperativo
 

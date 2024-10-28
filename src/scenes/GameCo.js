@@ -83,6 +83,7 @@ export class GameCo extends Scene {
     create() {
         
         this.add.image(550, 384, 'mapa');
+        this.add.image(550, 384, 'uixcop');
 
         //personajes
         this.p1 = this.physics.add.sprite(this.posicionp1.x, this.posicionp1.y, 'player1');

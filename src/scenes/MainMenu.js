@@ -9,7 +9,7 @@ export class MainMenu extends Scene
 
     create ()
     {
-        this.add.image(580, 384, 'background').setScale(2);
+        this.add.image(575, 400, 'background').setScale(1.7);
         this.add.image(580, 300, 'logo').setScale(1.5);
     
         this.playButton = this.add.image(580, 460, "playButton").setInteractive().setScale(0.2).setVisible(true);
@@ -49,12 +49,12 @@ export class MainMenu extends Scene
             this.langFRButton.setScale(0.187);
         });
 
-        this.langITButton = this.add.image(700, 550, "langITButton").setInteractive().setScale(0.125).setVisible(true);
-        this.langITButton.on('pointerover', () => {
-            this.langITButton.setScale(0.119);
+        this.langALButton = this.add.image(700, 550, "langALButton").setInteractive().setScale(0.125).setVisible(true);
+        this.langALButton.on('pointerover', () => {
+            this.langALButton.setScale(0.119);
         });
-        this.langITButton.on('pointerout', () => {
-            this.langITButton.setScale(0.125);
+        this.langALButton.on('pointerout', () => {
+            this.langALButton.setScale(0.125);
         });
 
         this.langBRButton = this.add.image(580, 630, "langBRButton").setInteractive().setScale(0.187).setVisible(true);
