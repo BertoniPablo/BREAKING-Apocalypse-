@@ -47,7 +47,7 @@ export class Game extends Scene {
     constructor() {
         super('Game');
         this.player1 = {
-            score: 0,
+            score: 60,
             controls: null,
             blocks: []
         };
@@ -56,12 +56,12 @@ export class Game extends Scene {
             controls: null,
             blocks: []
         };
-        this.timeLeft = 20; 
+        this.timeLeft = 60; 
         this.margin = 19; //margen 
     }
     
     init() {
-        this.timeLeft = 20;
+        this.timeLeft = 0;
         this.player1 = {
             score: 0,
         }
@@ -72,8 +72,8 @@ export class Game extends Scene {
 
     create() {
 
-        this.add.image(580, 384, 'background').setScale(2);
-        this.add.image(575, 384, 'uixvs');
+        this.add.image(575, 400, 'bg-vs').setScale(1);
+        this.add.image(575, 384.5, 'uixvs');
         this.player1.sprite = this.physics.add.sprite(300, 385, 'P1-idle').setScale(0.87);
         this.player2.sprite = this.physics.add.sprite(900, 385, 'P2-idle').setScale(0.87);
 
@@ -110,10 +110,10 @@ export class Game extends Scene {
         });
 
        
-        this.player1.scoreText = this.add.text(10, 10, `Score P1: ${this.player1.score}`, { fontSize: '32px', fill: '#ffffff' });
-        this.player2.scoreText = this.add.text(this.game.config.width - 270, 10, `Score P2: ${this.player2.score}`, { fontSize: '32px', fill: '#ffffff' });
+        this.player1.scoreText = this.add.text(200, 15, ` ${this.player1.score}`, { fontSize: '32px', fill: '#ffffff' });
+        this.player2.scoreText = this.add.text(this.game.config.width - 150, 15, ` ${this.player2.score}`, { fontSize: '32px', fill: '#ffffff' });
 
-        this.timerText = this.add.text(500, 10, `Time: ${this.timeLeft}`, { fontSize: '32px', fill: '#ffffff' });
+        this.timerText = this.add.text(587, 15, ` ${this.timeLeft}`, { fontSize: '32px', fill: '#ffffff' });
         this.timerEvent = this.time.addEvent({
             delay: 1000,
             callback: this.updateTimer,
@@ -253,13 +253,13 @@ export class Game extends Scene {
             });
     
             player.score += 10;
-            player.scoreText.setText(`Score P${player === this.player1 ? 1 : 2}: ${player.score}`);
+            player.scoreText.setText(` ${player.score}`);
         }
     }
 
     updateTimer() {
         this.timeLeft--;
-        this.timerText.setText(`Time: ${this.timeLeft}`);
+        this.timerText.setText(`${this.timeLeft}`);
         if (this.timeLeft <= 0) {
             this.timerEvent.remove();
         

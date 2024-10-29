@@ -10,7 +10,7 @@ export class GameOver extends Scene
     create (data)
     {
 
-        this.add.image(512, 384, 'background').setScale(2);
+        this.add.image(575, 400, 'bg-lob').setScale(1);
 
         this.add.text(600, 300, 'End Game', {
             fontFamily: 'Arial Black', fontSize: 64, color: '#ffffff',
@@ -42,7 +42,7 @@ export class GameOver extends Scene
         this.add.text(600, 400, `${data.winner}`, {
             fontFamily: 'Arial Black', 
             fontSize: 56, 
-            color: '#FFD700',
+            color: '#ffffff',
             stroke: '#000000', 
             strokeThickness: 6,
             align: 'center'

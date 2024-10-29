@@ -39,15 +39,17 @@ export class Preloader extends Scene
         this.load.image('langBRButton', 'menu/langBR.png');
 
         this.load.image('playButton', 'menu/play.png');
-        this.load.image('background', 'bg.jpeg');
+        this.load.image('background', 'menu/bg.png');
 
+        this.load.image('bg-lob', 'lobby/bg-lobby.png');
         this.load.image('back', 'lobby/backboton.png');
         this.load.image('VS', 'lobby/versus.png');
         this.load.image('COP', 'lobby/coop.png');
 
-        this.load.image ('mapa','cooperativo/mapacop.jpeg');
+        this.load.image ('mapa','cooperativo/mapacop.png');
         this.load.image ('uixcop', 'cooperativo/uixCOP.png');
 
+        this.load.image('bg-vs','versus/bgVS.jpeg');
         this.load.image ('uixvs', 'versus/uixVS.png');
         
         //cooperativo
@@ -72,25 +74,13 @@ export class Preloader extends Scene
         });
 
         //zombies
-        this.load.spritesheet('z1_idle', '', {
-            frameWidth: 130,
-            frameHeight: 158,
+        this.load.spritesheet('zombie1', 'cooperativo/zombie1-Sheet.png', {
+            frameWidth: 264,
+            frameHeight: 390,
         });
-        this.load.spritesheet('zombie1', '', {
-            frameWidth: 130,
+        this.load.spritesheet('zombie2', 'cooperativo/zombie2-Sheet.png', {
+            frameWidth: 125,
             frameHeight: 158,
-        });
-        this.load.spritesheet('z2_idle', '', {
-            frameWidth: 130,
-            frameHeight: 158,
-        });
-        this.load.spritesheet('zombie2', '', {
-            frameWidth: 130,
-            frameHeight: 158,
-        });
-        this.load.spritesheet('z3_idle','cooperativo/zombie3-idle.png', {
-            frameWidth: 115,
-            frameHeight: 170,
         });
         this.load.spritesheet('zombie3','cooperativo/zombie3-Sheet.png', {
             frameWidth: 130,
@@ -185,13 +175,13 @@ export class Preloader extends Scene
         //zombies
         this.anims.create({
             key: 'zombie1_walk',
-            frames: this.anims.generateFrameNumbers('zombie1', {start: 0, end: 7}),
+            frames: this.anims.generateFrameNumbers('zombie1', {start: 0, end: 4}),
             frameRate: 10,
             repeat: -1,
         })
         this.anims.create({
             key: 'zombie2_walk',
-            frames: this.anims.generateFrameNumbers('zombie2', {start: 0, end: 7}),
+            frames: this.anims.generateFrameNumbers('zombie2', {start: 0, end: 5}),
             frameRate: 10,
             repeat: -1,
         })

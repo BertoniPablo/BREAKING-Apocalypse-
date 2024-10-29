@@ -9,11 +9,9 @@ export class Lobby extends Scene
 
     create ()
     {
-        this.add.image(580, 384, 'background').setScale(2);
-
-
+        this.add.image(575, 400, 'bg-lob').setScale(1);
     
-        this.VSButton = this.add.image(580, 300, "VS").setInteractive().setScale(1).setVisible(true);
+        this.VSButton = this.add.image(300, 385, "VS").setInteractive().setScale(1).setVisible(true);
         this.VSButton.on('pointerover', () => {
             this.VSButton.setScale(0.97);
         });
@@ -37,7 +35,7 @@ export class Lobby extends Scene
             this.scene.start('MainMenu');
         });
 
-        this.COPButton = this.add.image(600, 550, "COP").setInteractive().setScale(0.9).setVisible(true);
+        this.COPButton = this.add.image(900, 385, "COP").setInteractive().setScale(0.9).setVisible(true);
         this.COPButton.on('pointerover', () => {
             this.COPButton.setScale(0.87);
         });
