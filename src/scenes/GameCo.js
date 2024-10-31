@@ -2,7 +2,7 @@ import { Scene } from 'phaser';
 
 class Zombie extends Phaser.Physics.Arcade.Sprite {
     constructor(scene, x, y, type, player) {
-        super(scene, x, y, 'zombie_idle');  
+        super(scene, x, y, 'zombie');  
 
         this.scene = scene;
         this.player = player; 
@@ -40,7 +40,7 @@ class Zombie extends Phaser.Physics.Arcade.Sprite {
     }
 
     startMoving() {
-        if (this.player) {  // Verifica que 'player' esté definido
+        if (this.player) {  
            this.scene.physics.moveToObject(this, this.player, this.speed);
         }
     }
@@ -64,28 +64,164 @@ class Zombie extends Phaser.Physics.Arcade.Sprite {
     }
 }
 
+class Material extends Phaser.GameObjects.Sprite {
+    constructor(scene, x, y, type) {
+        super(scene, x, y, type); 
+        this.scene = scene;
+        this.type = type;
+        this.collected = true; // Para que no se recolecte más de una vez
+        scene.add.existing(this);
+       
+        switch (type) {
+            case 'madera':
+                this.setTexture('madera_'); 
+                break;
+            case 'piedra':
+                this.setTexture('piedra_');
+                break;
+            case 'hierro':
+                this.setTexture('hierro_');
+                break;
+        }
+    }
+
+    // Si un jugador puede recoger el material
+    collect(materialCount) {
+        if (!this.collected) {
+            this.collected = true;
+            materialCount[this.type]++;
+            this.destroy(); 
+        }
+    }
+}
+
+class Torre extends Phaser.GameObjects.Sprite {
+    constructor(scene, x, y, type) {
+        super(scene, x, y, type); 
+        this.scene = scene;
+        this.type = type;
+
+        this.costos = {
+            ballesta: { madera: 5, piedra: 3, hierro: 2 },
+            cañon: { madera: 10, piedra: 7, hierro: 5 }
+        };
+
+        switch (type) {
+            case 'ballesta':
+                this.setTexture('crossbowSprite'); 
+                break;
+            case 'cañon':
+                this.setTexture('cannonSprite'); 
+                break;
+        }
+
+        scene.add.existing(this);
+    }
+
+    // Verifica si se puede construir
+    puedeConstruirse(materialCount) {
+        const costo = this.costos[this.type];
+        return (
+            materialCount.madera >= costo.madera &&
+            materialCount.piedra >= costo.piedra &&
+            materialCount.hierro >= costo.hierro
+        );
+    }
+
+    // Para construir y restar materiales
+    construir(materialCount) {
+        if (this.puedeConstruirse(materialCount)) {
+            const costo = this.costos[this.type];
+            materialCount.madera -= costo.madera;
+            materialCount.piedra -= costo.piedra;
+            materialCount.hierro -= costo.hierro;
+        }
+    }
+}
+
+
+function recolectarMaterial(player, material) {
+    if (Phaser.Math.Distance.Between(player.x, player.y, material.x, material.y) < 50) { //si está cerca
+        material.collect(player, materialCount);
+    }
+}
+
+//genera materiales en posiciones aleatorias
+function generarMaterialAleatorio(scene) {
+    const tipos = ['madera', 'piedra', 'hierro'];
+    const tipo = tipos[Math.floor(Math.random() * tipos.length)];
+    const x = Phaser.Math.Between(100, 700); 
+    const y = Phaser.Math.Between(100, 500);
+
+    const material = new Material(scene, x, y, tipo);
+
+    scene.add.existing(material);
+    return material;
+}
+
+function construirTorre(player, torre) {
+    if (Phaser.Math.Distance.Between(player.x, player.y, torre.x, torre.y) < 50) {
+        if (torre.puedeConstruirse()) {
+            torre.construir();
+            console.log(`¡Torre ${torre.type} construida!`);
+        } else {
+            console.log('No tienes suficientes materiales.');
+        }
+    }
+}
+
 export class GameCo extends Scene {
     constructor() {
         super('GameCo');
         this.player1 = this.p1
         this.player2 = this.p2
         this.vidaIp1 = 3;
-        this.vidaIp2 = 3;
+        this.vidaIp2 =  3;
         this.posicionp1 = { x: 300, y: 385 };
         this.posicionp2 = { x: 900, y: 385 };
         this.enContador = false;
-        this.move = true;
         this.cooldown = false; //cooldown
-        this.madera = 0;
-        this.piedra = 0;
-        this.metal = 0;
         this.puedeMoverse = true; //movimiento
+
+        this.materialCount = {
+            madera: 0,
+            piedra: 0,
+            hierro: 0,
+        };
+    }
+
+    generarMaterialAleatorio() {
+        const tipos = ['madera', 'piedra', 'hierro'];
+        const tipo = tipos[Math.floor(Math.random() * tipos.length)];
+        const x = Phaser.Math.Between(100, 700); 
+        const y = Phaser.Math.Between(100, 500);
+
+        const material = new Material(this, x, y, tipo);
+        this.materials.add(material); //añadir al grupo de materiales
     }
 
     create() {
         
-        this.add.image(575, 400, 'mapa');
+        this.materials = this.physics.add.group();
+        map = game.add.tilemap(575, 400 , 'mapa');
+        map.add.Tilesetimage('casa');
+        map.add.Tilesetimage('arboles');
+        map.add.Tilesetimage('piedras');
+        map.add.Tilesetimage('accesorios');
+        map.add.Tilesetimage('autos');
+
+        layer = map.createLayer (0);
+        layer.resizeworld();
+        
+
         this.add.image(575, 384.5, 'uixcop').setScale();
+
+        this.maderaText = this.add.text(50, 50, '0', { fontSize: '16px', fill: '#fff' });
+        this.piedraText = this.add.text(50, 70, '0', { fontSize: '16px', fill: '#fff' });
+        this.hierroText = this.add.text(50, 90, '0', { fontSize: '16px', fill: '#fff' });
+        
+        this.vidaIp1 = this.add.sprite(120, 40, 'vidap1', 0);
+        this.vidaIp2 = this.add.sprite(255, 40, 'vidap2', 0);
 
         //personajes
         this.p1 = this.physics.add.sprite(this.posicionp1.x, this.posicionp1.y, 'player1');
@@ -99,15 +235,7 @@ export class GameCo extends Scene {
         this.p2.setBounce(0);
         this.p2.setCollideWorldBounds(true);
         this.p2.play('p2_idle');
-
-        //zombies
-        this.zombie1 = new Zombie(this, 100, 100, 'zombie1', this.p1).setScale(0.21);
-        this.zombie2 = new Zombie(this, 300, 200, 'zombie2', this.p2).setScale(0.41);
-        this.zombie3 = new Zombie(this, 500, 300, 'zombie3', this.p1).setScale(0.45);
-
-        this.zombies = this.physics.add.group([this.zombie1, this.zombie2, this.zombie3]);
-
-        
+  
         this.p1.controls = this.input.keyboard.addKeys({
             LEFT: 'A',
             UP: 'W',
@@ -122,6 +250,26 @@ export class GameCo extends Scene {
             DOWN: 'DOWN'
         });
 
+
+        //zombies
+        this.zombie1 = new Zombie(this, 100, 100, 'zombie1', this.p1).setScale(0.21);
+        this.zombie2 = new Zombie(this, 300, 200, 'zombie2', this.p2).setScale(0.41);
+        this.zombie3 = new Zombie(this, 500, 300, 'zombie3', this.p1).setScale(0.45);
+
+        this.zombies = this.physics.add.group([this.zombie1, this.zombie2, this.zombie3]);
+
+        //colisiones para recolección de materiales
+        this.physics.add.overlap(this.p1, this.materials, (player, material) => {
+            material.collect(player, this.materialCount);
+            this.actualizarContadores();
+        }, null, this);
+
+        this.physics.add.overlap(this.p2, this.materials, (player, material) => {
+            material.collect(player, this.materialCount);
+            this.actualizarContadores();
+        }, null, this);
+
+      
         //colisiones
         this.physics.add.collider(this.p1, this.p2);
         this.physics.add.collider(this.p1, this.zombies, this.onPlayerHit, null, this);
@@ -129,12 +277,48 @@ export class GameCo extends Scene {
         
         this.input.keyboard.on('keydown', (event) => this.handleKeyPress(event));
         this.input.keyboard.on('keyup', (event) => this.handleKeyRelease(event));
+
+        this.time.addEvent({
+            delay: 5000,
+            callback: () => generarMaterialAleatorio(this),
+            loop: true
+        });
+
+        
+        const torreBallesta = new Torre(this, 200, 300, 'ballesta');
+        const torreCañon = new Torre(this, 500, 300, 'cañon');
+
+        //recolectar materiales y construir 
+        this.input.on('pointerdown', (pointer) => {
+            recolectarMaterial(this.p1, Material);
+            recolectarMaterial(this.p2, Material);
+            construirTorre(this.p1, torreBallesta);
+            construirTorre(this.p2, torreCañon);
+        });
+        
+        
+    }
+
+    collect(player, materialCount) {
+        if (!this.collected) {
+            this.collected = true;
+            materialCount[this.type]++;  // Incrementar el tipo correcto de material
+            this.destroy();
+        }
+    }
+    
+
+    actualizarContadores() {
+        this.maderaText.setText(`${this.materialCount.madera}`);
+        this.piedraText.setText(`${this.materialCount.piedra}`);
+        this.hierroText.setText(`${this.materialCount.hierro}`);
     }
 
     update() {
         
         //actualiza los zombies
         this.zombies.children.iterate(zombie => {
+            zombie.startMoving();
             zombie.update();  
         });
 
@@ -253,11 +437,6 @@ export class GameCo extends Scene {
         this.time.delayedCall(350, () => {
             this.cooldownP2 = false;
         });
-    }
-
-    onPlayerHit(player, zombie) {
-        player.takeDamage(1);  
-        zombie.receiveDamage(1);  
     }
 
 }

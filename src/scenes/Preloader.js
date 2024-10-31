@@ -45,14 +45,33 @@ export class Preloader extends Scene
         this.load.image('back', 'lobby/backboton.png');
         this.load.image('VS', 'lobby/versus.png');
         this.load.image('COP', 'lobby/coop.png');
-
-        this.load.image ('mapa','cooperativo/mapacop.png');
+        
+        this.load.tilemap('mapa', 'public/assets/cooperativo/mapacop.csv', null, Phaser.Tilemap.CSV);
         this.load.image ('uixcop', 'cooperativo/uixCOP.png');
 
         this.load.image('bg-vs','versus/bgVS.jpeg');
         this.load.image ('uixvs', 'versus/uixVS.png');
         
         //cooperativo
+
+        this.load.image('arboles','cooperativo/arboles.png');
+        this.load.image('piedras','cooperativo/piedras.png');
+        this.load.image('autos','cooperativo/autos.png');
+        this.load.image('accesorios','cooperativo/acce.png');
+        this.load.image('casa','cooperativo/casa.png');
+
+        this.load.spritesheet('madera_','cooperativo/madera.png', {frameWidth: 45, frameHeight: 44,});
+        this.load.spritesheet('piedra_','cooperativo/piedra.png', {frameWidth: 45, frameHeight: 44,});
+        this.load.spritesheet('hierro_','cooperativo/hierro.png', {frameWidth: 45, frameHeight: 44,});
+ 
+        this.load.spritesheet('vidap1', 'cooperativo/vidaP1-sheet.png', {
+            frameWidth: 100,
+            frameHeight: 50,
+        })
+        this.load.spritesheet('vidap2', 'cooperativo/vidaP2-sheet.png', {
+            frameWidth: 100,
+            frameHeight: 50,
+        })
 
         //players
         this.load.spritesheet('P1-idle', 'cooperativo/player1-idle.png', {
@@ -107,6 +126,18 @@ export class Preloader extends Scene
     create ()
     {
         //animaciones coop
+
+        //vidas
+        this.anims.create({
+            key: 'vida_p1',
+            frames: this.anims.generateFrameNumbers('vidap1', { start: 0}),
+            frameRate: 10,
+        });
+        this.anims.create({
+            key: 'vida_p2',
+            frames: this.anims.generateFrameNumbers('vidap2', { start: 0}),
+            frameRate: 10,
+        });
 
         //pjs
         this.anims.create({
