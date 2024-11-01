@@ -29,6 +29,7 @@ export class Preloader extends Scene
 
     preload ()
     {
+    
         this.load.setPath('assets');
         this.load.image('logo', 'menu/logo.png');
 
@@ -46,19 +47,19 @@ export class Preloader extends Scene
         this.load.image('VS', 'lobby/versus.png');
         this.load.image('COP', 'lobby/coop.png');
         
-        this.load.tilemap('mapa', 'public/assets/cooperativo/mapacop.csv', null, Phaser.Tilemap.CSV);
+        
         this.load.image ('uixcop', 'cooperativo/uixCOP.png');
 
         this.load.image('bg-vs','versus/bgVS.jpeg');
         this.load.image ('uixvs', 'versus/uixVS.png');
         
         //cooperativo
-
-        this.load.image('arboles','cooperativo/arboles.png');
-        this.load.image('piedras','cooperativo/piedras.png');
-        this.load.image('autos','cooperativo/autos.png');
-        this.load.image('accesorios','cooperativo/acce.png');
-        this.load.image('casa','cooperativo/casa.png');
+        this.load.tilemapTiledJSON('mapa', 'mapa/mapacop.json' );
+        this.load.image('arb','cooperativo/arboles.png');
+        this.load.image('pied','cooperativo/piedras.png');
+        this.load.image('aut','cooperativo/autos.png');
+        this.load.image('acce','cooperativo/accesorios.png');
+        this.load.image('cas','cooperativo/casa.png');
 
         this.load.spritesheet('madera_','cooperativo/madera.png', {frameWidth: 45, frameHeight: 44,});
         this.load.spritesheet('piedra_','cooperativo/piedra.png', {frameWidth: 45, frameHeight: 44,});

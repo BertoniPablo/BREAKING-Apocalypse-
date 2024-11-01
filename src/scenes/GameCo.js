@@ -203,17 +203,16 @@ export class GameCo extends Scene {
     create() {
         
         this.materials = this.physics.add.group();
-        map = game.add.tilemap(575, 400 , 'mapa');
-        map.add.Tilesetimage('casa');
-        map.add.Tilesetimage('arboles');
-        map.add.Tilesetimage('piedras');
-        map.add.Tilesetimage('accesorios');
-        map.add.Tilesetimage('autos');
+       
+        var map = this.make.tilemap ({key: 'mapa'});
+        var tileset = map.addTilesetImage ('casa', 'cas');
+        var tileset = map.addTilesetImage ('arboles', 'arb');
+        var tileset = map.addTilesetImage ('piedras','pied');
+        var tileset = map.addTilesetImage ('accesorios', 'acce');
+        var tileset = map.addTilesetImage ('autos', 'aut');
 
-        layer = map.createLayer (0);
-        layer.resizeworld();
-        
-
+        var layer = map.createLayer ('ground', 'arboles', tileset);
+        layer.setPosition(575, 400);
         this.add.image(575, 384.5, 'uixcop').setScale();
 
         this.maderaText = this.add.text(50, 50, '0', { fontSize: '16px', fill: '#fff' });
