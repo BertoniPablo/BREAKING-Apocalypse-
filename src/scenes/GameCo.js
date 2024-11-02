@@ -205,14 +205,23 @@ export class GameCo extends Scene {
         this.materials = this.physics.add.group();
        
         var map = this.make.tilemap ({key: 'mapa'});
+        var tileset = map.addTilesetImage ('camino_juego', 'camino');
         var tileset = map.addTilesetImage ('casa', 'cas');
-        var tileset = map.addTilesetImage ('arboles', 'arb');
-        var tileset = map.addTilesetImage ('piedras','pied');
-        var tileset = map.addTilesetImage ('accesorios', 'acce');
-        var tileset = map.addTilesetImage ('autos', 'aut');
+        var tileset = map.addTilesetImage ('arbol1', 'arb1');
+        var tileset = map.addTilesetImage ('arbol2', 'arb2');
+        var tileset = map.addTilesetImage ('arbol3', 'arb3');
+        var tileset = map.addTilesetImage ('piedra1','pied1');
+        var tileset = map.addTilesetImage ('piedra2','pied2');
+        var tileset = map.addTilesetImage ('piedra3','pied3');
+        var tileset = map.addTilesetImage ('acce1', 'acces1');
+        var tileset = map.addTilesetImage ('acce2', 'acces2');
+        var tileset = map.addTilesetImage ('acce3', 'acces3');
+        var tileset = map.addTilesetImage ('acce4', 'acces4');
+        var tileset = map.addTilesetImage ('tronco', 'tron');
+        var tileset = map.addTilesetImage ('auto1', 'aut1');
+        var tileset = map.addTilesetImage ('auto2', 'aut2');
 
-        var layer = map.createLayer ('ground', 'arboles', tileset);
-        layer.setPosition(575, 400);
+        var layer = map.createLayer ('ground', 'capasup', tileset).setPosition(575, 400);
         this.add.image(575, 384.5, 'uixcop').setScale();
 
         this.maderaText = this.add.text(50, 50, '0', { fontSize: '16px', fill: '#fff' });
