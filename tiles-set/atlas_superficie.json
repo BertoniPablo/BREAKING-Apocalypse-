@@ -1,7 +1,7 @@
 {
 	"textures": [
 		{
-			"image": "atlas_superficie.png",
+			"image": "atlas_superficie.tps.png",
 			"format": "RGBA8888",
 			"size": {
 				"w": 256,

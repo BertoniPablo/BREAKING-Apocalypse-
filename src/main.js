@@ -3,6 +3,7 @@ import { Game } from './scenes/Game';
 import { Lobby } from './scenes/Lobby';
 import { GameCo } from './scenes/GameCo';
 import { GameOver } from './scenes/GameOver';
+import { GameOver2 } from './scenes/GameOver2';
 import { MainMenu } from './scenes/MainMenu';
 import { Preloader } from './scenes/Preloader';
 
@@ -32,7 +33,8 @@ const config = {
         Lobby,
         GameCo,
         Game,
-        GameOver
+        GameOver,
+        GameOver2
     ]
 };
 

@@ -33,22 +33,14 @@ class Zombie extends Phaser.Physics.Arcade.Sprite {
                 this.speed = 50;
                 this.health = 3;
                 this.anims.play('zombie1_walk');
-                break;
+                break;    
         }
 
-        this.startMoving();
     }
 
     startMoving() {
         if (this.player) {  
            this.scene.physics.moveToObject(this, this.player, this.speed);
-        }
-    }
-
-    update() {
-
-        if (this.health <= 0) {
-            this.destroy();
         }
     }
 
@@ -59,115 +51,6 @@ class Zombie extends Phaser.Physics.Arcade.Sprite {
         }
     }
 
-    destroy() {
-        super.destroy();
-    }
-}
-
-class Material extends Phaser.GameObjects.Sprite {
-    constructor(scene, x, y, type) {
-        super(scene, x, y, type); 
-        this.scene = scene;
-        this.type = type;
-        this.collected = true; // Para que no se recolecte más de una vez
-        scene.add.existing(this);
-       
-        switch (type) {
-            case 'madera':
-                this.setTexture('madera_'); 
-                break;
-            case 'piedra':
-                this.setTexture('piedra_');
-                break;
-            case 'hierro':
-                this.setTexture('hierro_');
-                break;
-        }
-    }
-
-    // Si un jugador puede recoger el material
-    collect(materialCount) {
-        if (!this.collected) {
-            this.collected = true;
-            materialCount[this.type]++;
-            this.destroy(); 
-        }
-    }
-}
-
-class Torre extends Phaser.GameObjects.Sprite {
-    constructor(scene, x, y, type) {
-        super(scene, x, y, type); 
-        this.scene = scene;
-        this.type = type;
-
-        this.costos = {
-            ballesta: { madera: 5, piedra: 3, hierro: 2 },
-            cañon: { madera: 10, piedra: 7, hierro: 5 }
-        };
-
-        switch (type) {
-            case 'ballesta':
-                this.setTexture('crossbowSprite'); 
-                break;
-            case 'cañon':
-                this.setTexture('cannonSprite'); 
-                break;
-        }
-
-        scene.add.existing(this);
-    }
-
-    // Verifica si se puede construir
-    puedeConstruirse(materialCount) {
-        const costo = this.costos[this.type];
-        return (
-            materialCount.madera >= costo.madera &&
-            materialCount.piedra >= costo.piedra &&
-            materialCount.hierro >= costo.hierro
-        );
-    }
-
-    // Para construir y restar materiales
-    construir(materialCount) {
-        if (this.puedeConstruirse(materialCount)) {
-            const costo = this.costos[this.type];
-            materialCount.madera -= costo.madera;
-            materialCount.piedra -= costo.piedra;
-            materialCount.hierro -= costo.hierro;
-        }
-    }
-}
-
-
-function recolectarMaterial(player, material) {
-    if (Phaser.Math.Distance.Between(player.x, player.y, material.x, material.y) < 50) { //si está cerca
-        material.collect(player, materialCount);
-    }
-}
-
-//genera materiales en posiciones aleatorias
-function generarMaterialAleatorio(scene) {
-    const tipos = ['madera', 'piedra', 'hierro'];
-    const tipo = tipos[Math.floor(Math.random() * tipos.length)];
-    const x = Phaser.Math.Between(100, 700); 
-    const y = Phaser.Math.Between(100, 500);
-
-    const material = new Material(scene, x, y, tipo);
-
-    scene.add.existing(material);
-    return material;
-}
-
-function construirTorre(player, torre) {
-    if (Phaser.Math.Distance.Between(player.x, player.y, torre.x, torre.y) < 50) {
-        if (torre.puedeConstruirse()) {
-            torre.construir();
-            console.log(`¡Torre ${torre.type} construida!`);
-        } else {
-            console.log('No tienes suficientes materiales.');
-        }
-    }
 }
 
 export class GameCo extends Scene {
@@ -182,49 +65,32 @@ export class GameCo extends Scene {
         this.enContador = false;
         this.cooldown = false; //cooldown
         this.puedeMoverse = true; //movimiento
+        this.GameOver2 = false;
         
-
-        this.materialCount = {
-            madera: 0,
-            piedra: 0,
-            hierro: 0,
-        };
+        
     }
 
-    generarMaterialAleatorio() {
-        const tipos = ['madera', 'piedra', 'hierro'];
-        const tipo = tipos[Math.floor(Math.random() * tipos.length)];
-        const x = Phaser.Math.Between(100, 700); 
-        const y = Phaser.Math.Between(100, 500);
+    init (){
 
-        const material = new Material(this, x, y, tipo);
-        this.materials.add(material); //añadir al grupo de materiales
+        this.limitematerial = 10
+        this.material = {
+            madera: { count: 0,  limit: this.limitematerial },
+            piedra: { count: 0,  limit: this.limitematerial },
+            hierro: { count: 0,  limit: this.limitematerial },
+        } 
+
     }
 
     create() {
-        let tileProperties = this.cache.json.get('tileProperties');
-        console.log(tileProperties);
-         if (tileProperties && tileProperties[2]) { 
-        } else {
-            console.error('El objeto tileProperties o su propiedad 2 no está definido');
-        }
-        
-        this.materials = this.physics.add.group();
-        
-
-        // Crear el mapa
+    
         const map = this.make.tilemap({ key: 'mapa' });
-        console.log(map);
-        const tileset = map.addTilesetImage('atlas');
-        console.log(tileset);
-        const layer = map.createLayer('ground','capasup', tileset, 0, 0);
-
+        
+        const tileset = map.addTilesetImage('atlas', 'camino_');
+        
+        const layer = map.createLayer('camino','capasup', tileset, 0, 0);
 
         this.add.image(575, 384.5, 'uixcop').setScale();
 
-        this.maderaText = this.add.text(50, 50, '0', { fontSize: '16px', fill: '#fff' });
-        this.piedraText = this.add.text(50, 70, '0', { fontSize: '16px', fill: '#fff' });
-        this.hierroText = this.add.text(50, 90, '0', { fontSize: '16px', fill: '#fff' });
         
         this.vidaIp1 = this.add.sprite(120, 40, 'vidap1', 0);
         this.vidaIp2 = this.add.sprite(255, 40, 'vidap2', 0);
@@ -264,64 +130,33 @@ export class GameCo extends Scene {
 
         this.zombies = this.physics.add.group([this.zombie1, this.zombie2, this.zombie3]);
 
-        //colisiones para recolección de materiales
+        //materiales
 
-        layer.setCollisionByProperty({ collides: true });
-        
-        this.physics.add.overlap(this.p1, this.materials, (player, material) => {
-            material.collect(player, this.materialCount);
-            this.actualizarContadores();
-        }, null, this);
+        this.materialGroup = this.physics.add.group();
 
-        this.physics.add.overlap(this.p2, this.materials, (player, material) => {
-            material.collect(player, this.materialCount);
-            this.actualizarContadores();
-        }, null, this);
+        this.material["madera"].image = this.add.image(850, 20, 'madera').setVisible(false);
+        this.material["piedra"].image = this.add.image(950, 20, 'piedra').setVisible(false);
+        this.material["hierro"].image = this.add.image(1050, 20, 'hierro').setVisible(false);
+
+        this.material["madera"].text = this.add.text(870, 20, '0', { fontSize: '24px', fontFamily: 'Arial Black' ,fill: '#ffff' });
+        this.material["piedra"].text = this.add.text(970, 20, '0', { fontSize: '24px', fontFamily: 'Arial Black' ,fill: '#ffff' });
+        this.material["hierro"].text = this.add.text(1070, 20, '0', { fontSize: '24px', fontFamily: 'Arial Black' ,fill: '#ffff' });
 
       
         //colisiones
         this.physics.add.collider(this.p1, this.p2);
         this.physics.add.collider(this.p1, this.zombies, this.onPlayerHit, null, this);
         this.physics.add.collider(this.p2, this.zombies, this.onPlayerHit, null, this);
+
+        this.physics.add.overlap(this.p1, this.materialGroup, this.onShapeCollect, null, this);
+        this.physics.add.overlap(this.p2, this.materialGroup, this.onShapeCollect, null, this);
         
         this.input.keyboard.on('keydown', (event) => this.handleKeyPress(event));
         this.input.keyboard.on('keyup', (event) => this.handleKeyRelease(event));
-
-        this.time.addEvent({
-            delay: 5000,
-            callback: () => generarMaterialAleatorio(this),
-            loop: true
-        });
-
-        
-        const torreBallesta = new Torre(this, 200, 300, 'ballesta');
-        const torreCañon = new Torre(this, 500, 300, 'cañon');
-
-        //recolectar materiales y construir 
-        this.input.on('pointerdown', (pointer) => {
-            recolectarMaterial(this.p1, Material);
-            recolectarMaterial(this.p2, Material);
-            construirTorre(this.p1, torreBallesta);
-            construirTorre(this.p2, torreCañon);
-        });
         
         
-    }
-
-    collect(player, materialCount) {
-        if (!this.collected) {
-            this.collected = true;
-            materialCount[this.type]++;  // Incrementar el tipo correcto de material
-            this.destroy();
-        }
     }
     
-
-    actualizarContadores() {
-        this.maderaText.setText(`${this.materialCount.madera}`);
-        this.piedraText.setText(`${this.materialCount.piedra}`);
-        this.hierroText.setText(`${this.materialCount.hierro}`);
-    }
 
     update() {
         
@@ -400,6 +235,33 @@ export class GameCo extends Scene {
 
     }
     
+    onSecond() {
+        if (this.GameOver2) {
+            return;
+        }
+        const x = Phaser.Math.Between(40, this.game.config.width - 40); 
+        const y = 52;
+        let material = this.recolectables.create(
+            Phaser.Math.Between(3, 780, this.game.config.width - 40),
+            52,
+            type
+        );
+        material.setData("type", type);
+    }
+
+    onShapeCollect(player, material) {
+        const type = material.getData("type");
+        const materialInfo = this.material[type];
+
+        if (materialInfo.count < materialInfo.limit) {
+            materialInfo.count += 1;
+            material.destroy();
+            materialInfo.text.setText(materialInfo.count);
+
+        } else {
+            material.destroy();
+        }
+    }
 
     handleKeyPress(event) {
         
