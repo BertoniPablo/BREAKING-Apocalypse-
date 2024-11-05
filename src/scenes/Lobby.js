@@ -9,7 +9,7 @@ export class Lobby extends Scene
 
     create ()
     {
-        this.add.image(575, 400, 'bg-lob').setScale(1);
+        this.add.image(575, 394, 'bg-lob').setScale(1.02);
     
         this.VSButton = this.add.image(300, 385, "VS").setInteractive().setScale(1).setVisible(true);
         this.VSButton.on('pointerover', () => {

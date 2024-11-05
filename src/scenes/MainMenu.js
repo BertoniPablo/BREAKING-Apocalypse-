@@ -9,7 +9,7 @@ export class MainMenu extends Scene
 
     create ()
     {
-        this.add.image(575, 400, 'background').setScale(1);
+        this.add.image(575, 394, 'background').setScale(1.02);
         this.add.image(850, 250, 'logo').setScale(2);
     
         this.playButton = this.add.image(850, 490, "playButton").setInteractive().setScale(0.2).setVisible(true);

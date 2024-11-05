@@ -55,21 +55,7 @@ export class Preloader extends Scene
         
         //cooperativo
         this.load.tilemapTiledJSON('mapa', 'mapa/mapacop.json' );
-        this.load.image ('camino', 'tiles/camino-juego.png');
-        this.load.image('arb1','tiles/arbol1.png');
-        this.load.image('arb2','tiles/arbol2.png');
-        this.load.image('arb3','tiles/arbol3.png');
-        this.load.image('pied1','tiles/piedra1.png');
-        this.load.image('pied2','tiles/piedra2.png');
-        this.load.image('pied3','tiles/piedra3.png');
-        this.load.image('aut1','tiles/auto1.png');
-        this.load.image('aut2','tiles/auto2.png');
-        this.load.image('acces1','tiles/acce1.png');
-        this.load.image('acces2','tiles/acce2.png');
-        this.load.image('acces3','tiles/acce3.png');
-        this.load.image('acces4','tiles/acce4.png');
-        this.load.image('tron','tiles/acce.png');
-        this.load.image('cas','tiles/casa.png');
+        
 
         this.load.spritesheet('madera_','cooperativo/madera.png', {frameWidth: 45, frameHeight: 44,});
         this.load.spritesheet('piedra_','cooperativo/piedra.png', {frameWidth: 45, frameHeight: 44,});

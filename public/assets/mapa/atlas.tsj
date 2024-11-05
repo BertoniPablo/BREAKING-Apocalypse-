@@ -1,0 +1,14 @@
+{ "columns":10,
+ "image":"..\/..\/..\/..\/OneDrive\/Im\u00e1genes\/Capturas de pantalla\/atlas.png",
+ "imageheight":763,
+ "imagewidth":332,
+ "margin":0,
+ "name":"atlas",
+ "spacing":0,
+ "tilecount":230,
+ "tiledversion":"1.11.0",
+ "tileheight":32,
+ "tilewidth":32,
+ "type":"tileset",
+ "version":"1.10"
+}
