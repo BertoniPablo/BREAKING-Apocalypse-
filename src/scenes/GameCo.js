@@ -182,6 +182,7 @@ export class GameCo extends Scene {
         this.enContador = false;
         this.cooldown = false; //cooldown
         this.puedeMoverse = true; //movimiento
+        
 
         this.materialCount = {
             madera: 0,
@@ -201,12 +202,21 @@ export class GameCo extends Scene {
     }
 
     create() {
+        let tileProperties = this.cache.json.get('tileProperties');
+        console.log(tileProperties);
+         if (tileProperties && tileProperties[2]) { 
+        } else {
+            console.error('El objeto tileProperties o su propiedad 2 no está definido');
+        }
         
         this.materials = this.physics.add.group();
-       
+        
+
         // Crear el mapa
         const map = this.make.tilemap({ key: 'mapa' });
+        console.log(map);
         const tileset = map.addTilesetImage('atlas');
+        console.log(tileset);
         const layer = map.createLayer('ground','capasup', tileset, 0, 0);
 
 

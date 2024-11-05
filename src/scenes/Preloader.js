@@ -54,8 +54,12 @@ export class Preloader extends Scene
         this.load.image ('uixvs', 'versus/uixVS.png');
         
         //cooperativo
+        
+        this.load.json('tileProperties', 'mapa/mapacop.json');
+        
         this.load.tilemapTiledJSON('mapa', 'mapa/mapacop.json');
-        this.load.atlas('atlas', 'mapa/atlas_superficie.png', 'menu/atlas_superficie.json');
+        this.load.atlas('atlas', 'mapa/atlas_superficie.png', 'mapa/atlas_superficie.json');
+        this.load.image('camino_', 'mapa/camino.png');
 
 
         this.load.spritesheet('madera_','cooperativo/madera.png', {frameWidth: 45, frameHeight: 44,});

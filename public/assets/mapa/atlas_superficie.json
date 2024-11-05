@@ -1,132 +1,314 @@
-{"frames": [
-
 {
-	"filename": "acce1.png",
-	"frame": {"x":629,"y":928,"w":86,"h":67},
-	"rotated": false,
-	"trimmed": true,
-	"spriteSourceSize": {"x":4,"y":4,"w":86,"h":67},
-	"sourceSize": {"w":91,"h":71}
-},
-{
-	"filename": "acce2.png",
-	"frame": {"x":250,"y":953,"w":61,"h":48},
-	"rotated": false,
-	"trimmed": true,
-	"spriteSourceSize": {"x":17,"y":23,"w":61,"h":48},
-	"sourceSize": {"w":91,"h":71}
-},
-{
-	"filename": "acce3.png",
-	"frame": {"x":465,"y":949,"w":45,"h":59},
-	"rotated": true,
-	"trimmed": true,
-	"spriteSourceSize": {"x":23,"y":12,"w":45,"h":59},
-	"sourceSize": {"w":91,"h":71}
-},
-{
-	"filename": "acce4.png",
-	"frame": {"x":405,"y":950,"w":46,"h":58},
-	"rotated": true,
-	"trimmed": true,
-	"spriteSourceSize": {"x":20,"y":13,"w":46,"h":58},
-	"sourceSize": {"w":91,"h":71}
-},
-{
-	"filename": "arbol1.png",
-	"frame": {"x":530,"y":803,"w":97,"h":139},
-	"rotated": false,
-	"trimmed": true,
-	"spriteSourceSize": {"x":10,"y":12,"w":97,"h":139},
-	"sourceSize": {"w":121,"h":151}
-},
-{
-	"filename": "arbol2.png",
-	"frame": {"x":326,"y":803,"w":119,"h":145},
-	"rotated": false,
-	"trimmed": true,
-	"spriteSourceSize": {"x":1,"y":6,"w":119,"h":145},
-	"sourceSize": {"w":121,"h":151}
-},
-{
-	"filename": "arbol3.png",
-	"frame": {"x":207,"y":803,"w":117,"h":148},
-	"rotated": false,
-	"trimmed": true,
-	"spriteSourceSize": {"x":2,"y":3,"w":117,"h":148},
-	"sourceSize": {"w":121,"h":151}
-},
-{
-	"filename": "auto1.png",
-	"frame": {"x":447,"y":803,"w":144,"h":81},
-	"rotated": true,
-	"trimmed": true,
-	"spriteSourceSize": {"x":0,"y":2,"w":144,"h":81},
-	"sourceSize": {"w":144,"h":85}
-},
-{
-	"filename": "auto2.png",
-	"frame": {"x":629,"y":803,"w":123,"h":92},
-	"rotated": true,
-	"trimmed": true,
-	"spriteSourceSize": {"x":1,"y":1,"w":123,"h":92},
-	"sourceSize": {"w":126,"h":93}
-},
-{
-	"filename": "camino.png",
-	"frame": {"x":1,"y":1,"w":1150,"h":800},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":1150,"h":800},
-	"sourceSize": {"w":1150,"h":800}
-},
-{
-	"filename": "casa.png",
-	"frame": {"x":1,"y":803,"w":204,"h":199},
-	"rotated": false,
-	"trimmed": true,
-	"spriteSourceSize": {"x":0,"y":6,"w":204,"h":199},
-	"sourceSize": {"w":204,"h":205}
-},
-{
-	"filename": "piedra1.png",
-	"frame": {"x":375,"y":950,"w":50,"h":28},
-	"rotated": true,
-	"trimmed": true,
-	"spriteSourceSize": {"x":9,"y":21,"w":50,"h":28},
-	"sourceSize": {"w":64,"h":64}
-},
-{
-	"filename": "piedra2.png",
-	"frame": {"x":207,"y":953,"w":49,"h":41},
-	"rotated": true,
-	"trimmed": true,
-	"spriteSourceSize": {"x":7,"y":15,"w":49,"h":41},
-	"sourceSize": {"w":64,"h":64}
-},
-{
-	"filename": "piedra3.png",
-	"frame": {"x":313,"y":953,"w":47,"h":60},
-	"rotated": true,
-	"trimmed": true,
-	"spriteSourceSize": {"x":8,"y":4,"w":47,"h":60},
-	"sourceSize": {"w":64,"h":64}
-},
-{
-	"filename": "tronco.png",
-	"frame": {"x":526,"y":949,"w":43,"h":26},
-	"rotated": true,
-	"trimmed": true,
-	"spriteSourceSize": {"x":2,"y":0,"w":43,"h":26},
-	"sourceSize": {"w":45,"h":26}
-}],
-"meta": {
-	"app": "https://www.codeandweb.com/texturepacker",
-	"version": "1.0",
-	"image": "atlas_superficie.png",
-	"format": "RGBA8888",
-	"size": {"w":1152,"h":1003},
-	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:b9ed44070c9b5ebe79474b2f24d982f2:877b9ba656f593aa7e6db73284c40403:24457db29ecd7f31e95188349054d7a7$"
-}
+	"textures": [
+		{
+			"image": "atlas_superficie.tps.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 256,
+				"h": 976
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "casa.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 204,
+						"h": 205
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 214,
+						"h": 214
+					},
+					"frame": {
+						"x": 21,
+						"y": 21,
+						"w": 214,
+						"h": 214
+					}
+				},
+				{
+					"filename": "auto1.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 144,
+						"h": 85
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 166,
+						"h": 94
+					},
+					"frame": {
+						"x": 21,
+						"y": 237,
+						"w": 166,
+						"h": 94
+					}
+				},
+				{
+					"filename": "tronco.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 45,
+						"h": 26
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 46,
+						"h": 46
+					},
+					"frame": {
+						"x": 189,
+						"y": 237,
+						"w": 46,
+						"h": 46
+					}
+				},
+				{
+					"filename": "arbol2.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 121,
+						"h": 151
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 142,
+						"h": 166
+					},
+					"frame": {
+						"x": 21,
+						"y": 333,
+						"w": 142,
+						"h": 166
+					}
+				},
+				{
+					"filename": "acce3.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 91,
+						"h": 71
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 70,
+						"h": 94
+					},
+					"frame": {
+						"x": 165,
+						"y": 333,
+						"w": 70,
+						"h": 94
+					}
+				},
+				{
+					"filename": "acce4.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 91,
+						"h": 71
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 70,
+						"h": 94
+					},
+					"frame": {
+						"x": 165,
+						"y": 429,
+						"w": 70,
+						"h": 94
+					}
+				},
+				{
+					"filename": "arbol3.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 121,
+						"h": 151
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 142,
+						"h": 166
+					},
+					"frame": {
+						"x": 21,
+						"y": 501,
+						"w": 142,
+						"h": 166
+					}
+				},
+				{
+					"filename": "piedra1.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 64,
+						"h": 64
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 70,
+						"h": 70
+					},
+					"frame": {
+						"x": 165,
+						"y": 525,
+						"w": 70,
+						"h": 70
+					}
+				},
+				{
+					"filename": "piedra2.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 64,
+						"h": 64
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 70,
+						"h": 70
+					},
+					"frame": {
+						"x": 165,
+						"y": 597,
+						"w": 70,
+						"h": 70
+					}
+				},
+				{
+					"filename": "auto2.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 126,
+						"h": 93
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 142,
+						"h": 94
+					},
+					"frame": {
+						"x": 21,
+						"y": 669,
+						"w": 142,
+						"h": 94
+					}
+				},
+				{
+					"filename": "piedra3.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 64,
+						"h": 64
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 70,
+						"h": 70
+					},
+					"frame": {
+						"x": 165,
+						"y": 669,
+						"w": 70,
+						"h": 70
+					}
+				},
+				{
+					"filename": "arbol1.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 121,
+						"h": 151
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 118,
+						"h": 166
+					},
+					"frame": {
+						"x": 21,
+						"y": 765,
+						"w": 118,
+						"h": 166
+					}
+				},
+				{
+					"filename": "acce1.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 91,
+						"h": 71
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 94,
+						"h": 94
+					},
+					"frame": {
+						"x": 141,
+						"y": 765,
+						"w": 94,
+						"h": 94
+					}
+				},
+				{
+					"filename": "acce2.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 91,
+						"h": 71
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 94,
+						"h": 94
+					},
+					"frame": {
+						"x": 141,
+						"y": 861,
+						"w": 94,
+						"h": 94
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:11b10177d24c303760754f31699d1b16:1e2ac7195aca0bc32ad81b35210798e3:d421b15355fcbaa4c7adbc749c7f4750$"
+	}
 }
