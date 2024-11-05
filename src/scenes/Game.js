@@ -61,7 +61,7 @@ export class Game extends Scene {
     }
     
     init() {
-        this.timeLeft = 0;
+        this.timeLeft = 60;
         this.player1 = {
             score: 0,
         }
@@ -72,7 +72,7 @@ export class Game extends Scene {
 
     create() {
 
-        this.add.image(575, 400, 'bg-vs').setScale(1);
+        this.add.image(575, 394, 'bg-vs').setScale(1.02);
         this.add.image(575, 384.5, 'uixvs');
         this.player1.sprite = this.physics.add.sprite(300, 385, 'P1-idle').setScale(0.87);
         this.player2.sprite = this.physics.add.sprite(900, 385, 'P2-idle').setScale(0.87);

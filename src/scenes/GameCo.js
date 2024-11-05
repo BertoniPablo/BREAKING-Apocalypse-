@@ -204,7 +204,10 @@ export class GameCo extends Scene {
         
         this.materials = this.physics.add.group();
        
-        var map = this.make.tilemap ({key: 'mapa'});
+        // Crear el mapa
+        const map = this.make.tilemap({ key: 'mapa' });
+        const tileset = map.addTilesetImage('atlas');
+        const layer = map.createLayer('ground','capasup', tileset, 0, 0);
 
 
         this.add.image(575, 384.5, 'uixcop').setScale();
