@@ -62,9 +62,9 @@ export class Preloader extends Scene
         this.load.image('camino_', 'mapa/caminojuego.png')
 
 
-        this.load.spritesheet('madera_','cooperativo/madera.png', {frameWidth: 45, frameHeight: 44,});
-        this.load.spritesheet('piedra_','cooperativo/piedra.png', {frameWidth: 45, frameHeight: 44,});
-        this.load.spritesheet('hierro_','cooperativo/hierro.png', {frameWidth: 45, frameHeight: 44,});
+        this.load.image('madera_','cooperativo/madera.png');
+        this.load.image('piedra_','cooperativo/piedra.png');
+        this.load.image('hierro_','cooperativo/hierro.png');
  
         this.load.spritesheet('vidap1', 'cooperativo/vidaP1-sheet.png', {
             frameWidth: 100,
