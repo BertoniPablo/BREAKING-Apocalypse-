@@ -1,4 +1,5 @@
 import { Scene } from 'phaser';
+import { getPhrase } from '../Services/translation';
 
 export class GameOver extends Scene
 {
@@ -12,7 +13,7 @@ export class GameOver extends Scene
 
         this.add.image(575, 400, 'bg-lob').setScale(1);
 
-        this.add.text(600, 300, 'End Game', {
+        this.add.text(600, 300, getPhrase('End Game'), {
             fontFamily: 'Arial Black', fontSize: 64, color: '#ffffff',
             stroke: '#000000', strokeThickness: 8,
             align: 'center'

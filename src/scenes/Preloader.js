@@ -49,6 +49,7 @@ export class Preloader extends Scene
         
         
         this.load.image ('uixcop', 'cooperativo/uixCOP.png');
+        this.load.image('uixcopCollision','cooperativo/collider.png');
 
         this.load.image('bg-vs','versus/bgVS.jpeg');
         this.load.image ('uixvs', 'versus/uixVS.png');
@@ -58,8 +59,8 @@ export class Preloader extends Scene
         this.load.json('tileProperties', 'mapa/mapacop.json');
         
         this.load.tilemapTiledJSON('mapa', 'mapa/mapacop.json');
-        this.load.atlas('atlas', 'mapa/atlas_superficie.png', 'mapa/atlas_superficie.json', 32, 32);
-        this.load.image('camino_', 'mapa/caminojuego.png')
+        this.load.atlas('atlas_superficie', 'mapa/atlas_superficie.png', 'mapa/atlas_superficie.json', 32, 32);
+        this.load.image('camino', 'mapa/camino.png')
 
 
         this.load.image('madera_','cooperativo/madera.png');

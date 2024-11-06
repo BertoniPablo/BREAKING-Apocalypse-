@@ -90,12 +90,14 @@ export class GameCo extends Scene {
     create() {
     
         const map = this.make.tilemap({ key: 'mapa' });
-        const tileset = map.addTilesetImage('atlas', 'camino_');
-        const layer = map.createLayer('camino', tileset, 0, 0);
+        const tileset = map.addTilesetImage('atlas_superficie');
+        const layer = map.createLayer('capasup', tileset, 0, 0);
 
-        this.uixBar = this.add.image(575, 384.5, 'uixcop').setScale(1);
-        this.uixCollider = this.physics.add.staticImage(575, 384.5, 'uixcop').setScale(1); 
-        
+        this.add.image(575, 384.5, 'uixcop').setScale(1); 
+
+        this.uixCollider = this.physics.add.staticImage(575, 25, 'uixcopCollision').setScale(10);
+        this.uixCollider.setVisible(false); 
+
         this.vidaIp1 = this.add.sprite(120, 40, 'vidap1', 0);
         this.vidaIp2 = this.add.sprite(255, 40, 'vidap2', 0);
 
@@ -161,6 +163,8 @@ export class GameCo extends Scene {
         this.physics.add.collider(this.p2, this.uixCollider);
         this.physics.add.overlap(this.p1, this.materialGroup, this.onShapeCollect, null, this);
         this.physics.add.overlap(this.p2, this.materialGroup, this.onShapeCollect, null, this);
+        this.physics.add.collider(this.player1, );
+        this.physics.add.collider(this.player2, );
 
         
         this.input.keyboard.on('keydown', (event) => this.handleKeyPress(event));
@@ -263,7 +267,7 @@ export class GameCo extends Scene {
         
         //actualiza los zombies
         this.zombies.children.iterate(zombie => {
-            zombie.startMoving();
+           
             zombie.update();  
         });
 

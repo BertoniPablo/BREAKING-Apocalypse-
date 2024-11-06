@@ -1,0 +1,24 @@
+{ "columns":0,
+ "grid":
+    {
+     "height":1,
+     "orientation":"orthogonal",
+     "width":1
+    },
+ "margin":0,
+ "name":"camino",
+ "spacing":0,
+ "tilecount":1,
+ "tiledversion":"1.11.0",
+ "tileheight":800,
+ "tiles":[
+        {
+         "id":0,
+         "image":"..\/..\/..\/..\/OneDrive\/Escritorio\/tiles-set\/camino.png",
+         "imageheight":800,
+         "imagewidth":1150
+        }],
+ "tilewidth":1150,
+ "type":"tileset",
+ "version":"1.10"
+}
