@@ -27,9 +27,8 @@ export class Preloader extends Scene
         });
     }
 
-    preload ()
-    {
-    
+    preload (){
+
         this.load.setPath('assets');
         this.load.image('logo', 'menu/logo.png');
 
@@ -56,16 +55,17 @@ export class Preloader extends Scene
         
         //cooperativo
         
-        this.load.json('tileProperties', 'mapa/mapacop.json');
-        
         this.load.tilemapTiledJSON('mapa', 'mapa/mapacop.json');
-        this.load.atlas('atlas_superficie', 'mapa/atlas_superficie.png', 'mapa/atlas_superficie.json', 32, 32);
-        this.load.image('camino', 'mapa/camino.png')
+        this.load.atlas('atlas_superficie', 'mapa/atlas_superficie.png', 'mapa/atlas_superficie.json', 64, 64);
+        this.load.image('camino', 'mapa/camino.png', 64, 64);
 
 
         this.load.image('madera_','cooperativo/madera.png');
         this.load.image('piedra_','cooperativo/piedra.png');
         this.load.image('hierro_','cooperativo/hierro.png');
+
+        this.load.image('cañon', 'cooperativo/cañon1.png');
+        this.load.image('ballesta', 'cooperativo/ballesta1.png');
  
         this.load.spritesheet('vidap1', 'cooperativo/vidaP1-sheet.png', {
             frameWidth: 100,
@@ -126,19 +126,49 @@ export class Preloader extends Scene
         });
     }
 
-    create ()
-    {
+    create (){
         //animaciones coop
 
         //vidas
         this.anims.create({
             key: 'vida_p1',
-            frames: this.anims.generateFrameNumbers('vidap1', { start: 0}),
+            frames: this.anims.generateFrameNumbers('vidap1', { start: 0, end: 0}),
             frameRate: 10,
         });
         this.anims.create({
+            key: '2vida_p1',
+            frames: this.anims.generateFrameNumbers('vidap1', { start: 1, end:1}),
+            frameRate: 10,
+        });
+        this.anims.create({
+            key: '1vida_p1',
+            frames: this.anims.generateFrameNumbers('vidap1', { start: 2, end: 2}),
+            frameRate: 10,
+        });
+        this.anims.create({
+            key: '0vida_p1',
+            frames: this.anims.generateFrameNumbers('vidap1', { start: 3, end:3}),
+            frameRate: 10,
+        });
+
+        this.anims.create({
             key: 'vida_p2',
-            frames: this.anims.generateFrameNumbers('vidap2', { start: 0}),
+            frames: this.anims.generateFrameNumbers('vidap2', { start: 0, end: 0}),
+            frameRate: 10,
+        });
+        this.anims.create({
+            key: '2vida_p2',
+            frames: this.anims.generateFrameNumbers('vidap2', { start: 1, end: 1}),
+            frameRate: 10,
+        });
+        this.anims.create({
+            key: '1vida_p2',
+            frames: this.anims.generateFrameNumbers('vidap2', { start: 2, end: 2}),
+            frameRate: 10,
+        });
+        this.anims.create({
+            key: '0vida_p2',
+            frames: this.anims.generateFrameNumbers('vidap2', { start: 3, end: 3}),
             frameRate: 10,
         });
 

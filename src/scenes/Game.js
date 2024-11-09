@@ -47,7 +47,7 @@ export class Game extends Scene {
     constructor() {
         super('Game');
         this.player1 = {
-            score: 60,
+            score: 0,
             controls: null,
             blocks: []
         };
@@ -56,12 +56,12 @@ export class Game extends Scene {
             controls: null,
             blocks: []
         };
-        this.timeLeft = 1; 
+        this.timeLeft = 60; 
         this.margin = 19; //margen 
     }
     
     init() {
-        this.timeLeft = 1;
+        this.timeLeft = 60;
         this.player1 = {
             score: 0,
         }
@@ -86,12 +86,20 @@ export class Game extends Scene {
     
         const screenWidth = this.game.config.width;
         const halfScreenWidth = screenWidth / 2;
+        const blockSize = 32;
+        
 
-        const player1EndX = halfScreenWidth - this.margin / 2;
-        const player2StartX = halfScreenWidth + this.margin / 2.5;
+        // Ajustamos los límites de los bloques para ambos jugadores
+        const player1StartX = 0; // Comienza desde el borde izquierdo de la pantalla
+        const player1EndX = halfScreenWidth; // Límite hasta la mitad de la pantalla para el jugador 1
 
-        this.createBlocksForPlayer(this.player1, 0, player1EndX, 1);
-        this.createBlocksForPlayer(this.player2, player2StartX, screenWidth, 2);
+        const player2StartX = halfScreenWidth; // Comienza desde la mitad de la pantalla para el jugador 2
+        const player2EndX = screenWidth; // Límite hasta el borde derecho de la pantalla
+
+        // Creamos los bloques para cada jugador usando los límites ajustados
+        this.createBlocksForPlayer(this.player1, player1StartX, player1EndX, 1);
+        this.createBlocksForPlayer(this.player2, player2StartX, player2EndX, 2);
+
 
         this.setColliders();
         
@@ -124,6 +132,19 @@ export class Game extends Scene {
         this.input.keyboard.on('keydown', (event) => {
             this.handleKeyPress(event);
         });
+    }
+
+    update() {
+        if (this.player1.controls.jump.isDown && this.player1.sprite.body.touching.down) {
+            this.player1.sprite.setVelocityY(-400); 
+        }
+        if (this.player2.controls.jump.isDown && this.player2.sprite.body.touching.down) {
+            this.player2.sprite.setVelocityY(-400); 
+        }
+
+        //detecta la primer columna de cada jugador
+        this.checkClosestColumn(this.player1); 
+        this.checkClosestColumn(this.player2);
     }
 
     update() {
@@ -179,7 +200,7 @@ export class Game extends Scene {
             }
         }
     }
-
+    //funcion 
     handleLanding(playerSprite, block) {
         if (playerSprite.body.touching.down) {
             //jugador aterrizo en un bloque
@@ -225,6 +246,7 @@ export class Game extends Scene {
         } 
     }
 
+    //funcion para que me reconozca el primer bloque que desde la izquierda y que no permita que empiece a destruir la sigui columna sino destrui completa la anterior.
     handleBlockRemoval(player, key) {
         let blockToRemove = player.blocks.find(block => block.keyremove === key);
         if (blockToRemove) {

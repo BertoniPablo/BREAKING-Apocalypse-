@@ -25,6 +25,10 @@
         "vite": "^5.3.1"
     },
     "dependencies": {
+        "cors": "^2.8.5",
+        "express": "^4.21.1",
         "phaser": "^3.85.2"
-    }
+    },
+    "main": "log.js",
+    "keywords": []
 }

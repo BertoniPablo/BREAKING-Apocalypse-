@@ -11,27 +11,31 @@ class Zombie extends Phaser.Physics.Arcade.Sprite {
         this.scene.add.existing(this);
         this.scene.physics.add.existing(this);
         this.setCollideWorldBounds(true);
+        this.setActive(false).setVisible(false); 
 
         //tipos de zombies
         switch (type) {
             case 'zombie1':
                 this.speed = 50;   
-                this.health = 3;   
+                this.health = 3; 
+                this.damage = 0.5 
                 this.anims.play('zombie1_walk');  
                 break;
             case 'zombie2':
                 this.speed = 100;  
-                this.health = 5;   
+                this.health = 5;  
+                this.damage = 1 
                 this.anims.play('zombie2_walk');  
                 break;
             case 'zombie3':
                 this.speed = 150;  
                 this.health = 7;  
+                this.damage = 2
                 this.anims.play('zombie3_walk');  
                 break;
             default:
                 this.speed = 50;
-                this.health = 3;
+                this.health = 1;
                 this.anims.play('zombie1_walk');
                 break;    
         }
@@ -53,13 +57,60 @@ class Zombie extends Phaser.Physics.Arcade.Sprite {
 
 }
 
+class Tower extends Phaser.GameObjects.Sprite {
+    constructor(scene, x, y, type) {
+        super(scene, x, y, type);
+        this.scene = scene;
+        this.type = type;
+        
+        this.scene.add.existing(this);
+        this.scene.physics.add.existing(this);
+        
+        this.setActive(true).setVisible(true);
+        this.shootCooldown = 1000; // Tiempo entre disparos en ms
+        this.lastShotTime = 0;
+        
+        // Configurar el tipo de torre
+        switch (type) {
+            case 'ballesta':
+                this.range = 200;
+                this.materialCost = { madera: 10, piedra: 5, hierro: 2 };
+                break;
+            case 'cañon':
+                this.range = 250;
+                this.materialCost = { madera: 5, piedra: 6, hierro: 3 };
+                break;
+            default:
+                this.range = 100;
+                this.materialCost = { madera: 5, piedra: 5, hierro: 2 };
+        }
+    }
+
+    shoot(target) {
+        if (this.scene.time.now - this.lastShotTime > this.shootCooldown) {
+            this.lastShotTime = this.scene.time.now;
+            const line = this.scene.add.line(
+                0, 0, this.x, this.y, target.x, target.y, 0xff0000
+            ).setOrigin(0, 0).setLineWidth(2);
+            this.scene.time.delayedCall(100, () => line.destroy());
+            target.receiveDamage(1);
+        }
+    }
+
+    update(zombies) {
+        const target = zombies.getChildren().find(zombie => {
+            return Phaser.Math.Distance.Between(this.x, this.y, zombie.x, zombie.y) <= this.range;
+        });
+        if (target) {
+            this.shoot(target);
+        }
+    }
+}
+
+
 export class GameCo extends Scene {
     constructor() {
         super('GameCo');
-        this.player1 = this.p1
-        this.player2 = this.p2
-        this.vidaIp1 = 3;
-        this.vidaIp2 =  3;
         this.posicionp1 = { x: 300, y: 385 };
         this.posicionp2 = { x: 900, y: 385 };
         this.enContador = false;
@@ -70,9 +121,13 @@ export class GameCo extends Scene {
         this.currentWave = 0; // Contador de oleadas
         this.maxWaves = 5;
         this.timerText =    
-        this.timer1 =         
-        this.timer2 =
-        this.remainingTime  
+        this.timer1 = null        
+        this.timer2 = null
+        this.remainingTime = null
+        this.buildingLocations = [
+            { x: 400, y: 300 }, { x: 700, y: 300 } // Puntos de construcción
+        ];
+        this.towers = null;
          
     }
 
@@ -91,15 +146,15 @@ export class GameCo extends Scene {
     
         const map = this.make.tilemap({ key: 'mapa' });
         const tileset = map.addTilesetImage('atlas_superficie');
-        const layer = map.createLayer('capasup', tileset, 0, 0);
+        const caminoTileset = map.addTilesetImage('camino');
+
+        const caminoLayer = map.createLayer('ground', caminoTileset, 0, 0);
+        const layer = map.createLayer('capasup', tileset, 0, 0).setCollisionByProperty({ collides: true });
 
         this.add.image(575, 384.5, 'uixcop').setScale(1); 
-
         this.uixCollider = this.physics.add.staticImage(575, 25, 'uixcopCollision').setScale(10);
         this.uixCollider.setVisible(false); 
 
-        this.vidaIp1 = this.add.sprite(120, 40, 'vidap1', 0);
-        this.vidaIp2 = this.add.sprite(255, 40, 'vidap2', 0);
 
         //personajes
         this.p1 = this.physics.add.sprite(this.posicionp1.x, this.posicionp1.y, 'player1');
@@ -130,14 +185,14 @@ export class GameCo extends Scene {
 
 
         //zombies
+        this.zombies = this.physics.add.group([this.zombie1, this.zombie2, this.zombie3]);
+
         this.zombie1 = new Zombie(this, 100, 100, 'zombie1', this.p1).setScale(0.21);
         this.zombie2 = new Zombie(this, 300, 200, 'zombie2', this.p2).setScale(0.41);
         this.zombie3 = new Zombie(this, 500, 300, 'zombie3', this.p1).setScale(0.45);
 
-        this.zombies = this.physics.add.group([this.zombie1, this.zombie2, this.zombie3]);
 
         //materiales
-
         this.materialGroup = this.physics.add.group();
 
         this.material["madera"].text = this.add.text(870, 20, '0', { fontSize: '24px', fontFamily: 'Arial Black' ,fill: '#ffff' });
@@ -151,22 +206,37 @@ export class GameCo extends Scene {
             loop: true
         });
 
-        this.timerText = this.add.text(590, 20,  '', { fontSize: '24px', fontFamily: 'Arial Black',fill: '#ffff' });
+        //torres
+        this.towers = this.physics.add.group();
+        //ubicaciones de construcción
+        this.buildingLocations.forEach(location => {
+            const marker = this.add.circle(location.x, location.y, 20, 0xff0000).setAlpha(0.5);
+            marker.setData('location', location);
+        });
+
+        this.timerText = this.add.text(590, 20,  '60', { fontSize: '24px', fontFamily: 'Arial Black',fill: '#ffff' });
 
         //colisiones
         this.physics.add.collider(this.p1, this.p2);
         this.physics.add.collider(this.p1, this.zombies, this.onPlayerHit, null, this);
         this.physics.add.collider(this.p2, this.zombies, this.onPlayerHit, null, this);
+
         this.physics.add.collider(this.materialGroup, this.uixCollider);
         this.physics.add.collider(this.zombies, this.uixCollider); 
         this.physics.add.collider(this.p1, this.uixCollider); 
         this.physics.add.collider(this.p2, this.uixCollider);
+
         this.physics.add.overlap(this.p1, this.materialGroup, this.onShapeCollect, null, this);
         this.physics.add.overlap(this.p2, this.materialGroup, this.onShapeCollect, null, this);
-        this.physics.add.collider(this.player1, );
-        this.physics.add.collider(this.player2, );
 
-        
+        this.physics.add.overlap(this.p1, this.buildingLocations, this.handleBuildingOverlap, null, this);
+        this.physics.add.overlap(this.p2, this.buildingLocations, this.handleBuildingOverlap, null, this);
+
+        this.physics.add.collider(this.p1, layer);
+        this.physics.add.collider(this.p2, layer);
+        this.physics.add.collider(this.zombies, layer);
+        this.physics.add.collider(this.materialGroup, layer);
+
         this.input.keyboard.on('keydown', (event) => this.handleKeyPress(event));
         this.input.keyboard.on('keyup', (event) => this.handleKeyRelease(event));
         
@@ -175,8 +245,9 @@ export class GameCo extends Scene {
     
     startTimer1() {
         this.remainingTime = 60; 
+        this.timerText.setText('Preparación...');
         this.timer1 = this.time.addEvent({
-            delay: 60000,  // 60 segundos en milisegundos
+            delay: 60000, 
             callback: this.onTimer1Complete,
             callbackScope: this,
             loop: false
@@ -185,82 +256,32 @@ export class GameCo extends Scene {
 
     startTimer2() {
         this.remainingTime = 120;
+        this.timerText.setText('Oleada ' + this.currentWave);
         this.timer2 = this.time.addEvent({
             delay: 120000,  
             callback: this.onTimer2Complete,
             callbackScope: this,
             loop: false
         });
+
+        this.spawnZombiesWave();
+
     }
 
     onTimer1Complete() {
-       
-        this.startTimer2();
-    }
-    onTimer2Complete() {
-        
-        this.startTimer1();
-    }
-
-    spawnZombiesWave() {
-        this.currentWave++;
-
-        if (this.currentWave > this.maxWaves) {
-            console.log('Todas las oleadas completadas.');
-            return; 
-        }
-
-        let zombiesToSpawn = [];
-
-        switch (this.currentWave) {
-            case 1:
-                zombiesToSpawn.push('zombie1');
-                break;
-            case 2:
-                zombiesToSpawn.push('zombie1', 'zombie1', 'zombie2');
-                break;
-            case 3:
-                zombiesToSpawn.push('zombie1', 'zombie2', 'zombie2');
-                break;
-            case 4:
-                zombiesToSpawn.push('zombie2', 'zombie2', 'zombie3');
-                break;
-            case 5:
-                zombiesToSpawn.push('zombie3', 'zombie3');
-                break;
-            default:
-                break;
-        }
-
-        zombiesToSpawn.forEach(type => {
-            const x = Phaser.Math.Between(40, this.game.config.width - 40);
-            const y = Phaser.Math.Between(40, this.game.config.height - 40);
-            const zombie = new Zombie(this, x, y, type, this.p1).setScale(0.21);
-            this.zombies.add(zombie);
-        });
-
-        
+        //siguiente oleada
         if (this.currentWave < this.maxWaves) {
-            this.time.addEvent({
-                delay: 60000, 
-                callback: this.spawnZombiesWave,
-                callbackScope: this,
-                loop: false
-            });
+            this.currentWave++;
+            this.startTimer2();
+        } else {
+            console.log('Todas las oleadas completadas.');
+            this.timerText.setText('Juego completado');
         }
     }
-
-    spawnMaterial() {
-
-        const types = Object.keys(this.material);
-        const type = types[Phaser.Math.Between(0, types.length - 1)];
-
-        const x = Phaser.Math.Between(40, this.game.config.width - 40);
-        const y = Phaser.Math.Between(40, this.game.config.height - 40);
-
-        const material = this.materialGroup.create(x, y, type);
-        material.setData("type", type); 
-        material.setCollideWorldBounds(true); 
+    
+    onTimer2Complete() {
+        this.clearZombies(); 
+        this.startTimer1();
     }
 
     update() {
@@ -339,26 +360,112 @@ export class GameCo extends Scene {
         }
 
         if (this.zombieSpawned) {
-            this.spawnZombies(); // Llama a una función para generar zombies
+            this.spawnZombies(); 
         }
 
-        // Actualiza el tiempo restante del temporizador activo y el texto
+    
         if (this.timer1 && !this.timer1.hasDispatched) {
-            this.remainingTime -= this.game.loop.delta / 1000; // Disminuir el tiempo restante
+            this.remainingTime -= this.game.loop.delta / 1000; 
             this.timerText.setText(` ${Math.max(0, Math.ceil(this.remainingTime))}`);
         } else if (this.timer2 && !this.timer2.hasDispatched) {
-            this.remainingTime -= this.game.loop.delta / 1000; // Disminuir el tiempo restante
+            this.remainingTime -= this.game.loop.delta / 1000;
             this.timerText.setText(` ${Math.max(0, Math.ceil(this.remainingTime))}`);
         }
+
+        this.towers.getChildren().forEach(tower => {
+            tower.update(this.zombies);
+        });
     }
-    
-    spawnZombies() {
-        // Lógica para generar zombies aquí
-        // Ejemplo: 
-        if (this.zombies.countActive(true) < 5) { // Limita a 5 zombies en la escena
+
+    //construcciones
+    handleBuildingOverlap(player, marker) {
+        const location = marker.getData('location');
+        const availableMaterials = player === this.p1 ? this.material : this.material;
+        
+        if (this.checkMaterials(availableMaterials, 'ballesta')) {
+            this.createTower(location.x, location.y, 'ballesta', player);
+            this.deductMaterials(availableMaterials, 'ballesta');
+        } else if (this.checkMaterials(availableMaterials, 'canon')) {
+            this.createTower(location.x, location.y, 'canon', player);
+            this.deductMaterials(availableMaterials, 'canon');
+        }
+    }
+    checkMaterials(materials, towerType) {
+        const cost = towerType === 'ballesta' ? { madera: 10, piedra: 5, hierro: 2 } : { madera: 5, piedra: 6, hierro: 3 };
+        return Object.keys(cost).every(key => materials[key].count >= cost[key]);
+    }
+    deductMaterials(materials, towerType) {
+        const cost = towerType === 'ballesta' ? { madera: 10, piedra: 5, hierro: 2 } : { madera: 5, piedra: 6, hierro: 3 };
+        Object.keys(cost).forEach(key => {
+            materials[key].count -= cost[key];
+            materials[key].text.setText(materials[key].count);
+        });
+    }
+    createTower(x, y, type, player) {
+        const tower = new Tower(this, x, y, type);
+        this.towers.add(tower);
+    }
+
+
+    spawnZombiesWave() {
+        let zombiesToSpawn = [];
+
+        switch (this.currentWave) {
+            case 1:
+                zombiesToSpawn.push('zombie1');
+                break;
+            case 2:
+                zombiesToSpawn.push('zombie1', 'zombie1', 'zombie2');
+                break;
+            case 3:
+                zombiesToSpawn.push('zombie1', 'zombie2', 'zombie2');
+                break;
+            case 4:
+                zombiesToSpawn.push('zombie2', 'zombie2', 'zombie3');
+                break;
+            case 5:
+                zombiesToSpawn.push('zombie3', 'zombie3');
+                break;
+            default:
+                break;
+        }
+       
+        zombiesToSpawn.forEach(type => {
             const x = Phaser.Math.Between(40, this.game.config.width - 40);
             const y = Phaser.Math.Between(40, this.game.config.height - 40);
-            const zombieType = `zombie${Phaser.Math.Between(1, 3)}`; // Elegir un tipo de zombie al azar
+            const zombie = new Zombie(this, x, y, type, this.p1).setScale(0.21);
+            zombie.setActive(true).setVisible(true); 
+            this.zombies.add(zombie);
+            zombie.startMoving(); 
+        });
+    }
+
+    clearZombies() {
+        this.zombies.children.iterate(zombie => {
+            zombie.setActive(false).setVisible(false);
+            zombie.destroy(); 
+        });
+    }
+
+    spawnMaterial() {
+
+        const types = Object.keys(this.material);
+        const type = types[Phaser.Math.Between(0, types.length - 1)];
+
+        const x = Phaser.Math.Between(40, this.game.config.width - 40);
+        const y = Phaser.Math.Between(40, this.game.config.height - 40);
+
+        const material = this.materialGroup.create(x, y, type);
+        material.setData("type", type); 
+        material.setCollideWorldBounds(true); 
+    }
+
+    spawnZombies() {
+        //generar zombies 
+        if (this.zombies.countActive(true) < 5) { 
+            const x = Phaser.Math.Between(40, this.game.config.width - 40);
+            const y = Phaser.Math.Between(40, this.game.config.height - 40);
+            const zombieType = `zombie${Phaser.Math.Between(1, 3)}`; 
             const zombie = new Zombie(this, x, y, zombieType, this.p1).setScale(0.21);
             this.zombies.add(zombie);
         }

@@ -1,24 +1,41 @@
-{ "columns":0,
- "grid":
-    {
-     "height":1,
-     "orientation":"orthogonal",
-     "width":1
-    },
- "margin":0,
- "name":"camino",
- "spacing":0,
- "tilecount":1,
- "tiledversion":"1.11.0",
- "tileheight":800,
- "tiles":[
-        {
-         "id":0,
-         "image":"..\/..\/..\/..\/OneDrive\/Escritorio\/tiles-set\/camino.png",
-         "imageheight":800,
-         "imagewidth":1150
-        }],
- "tilewidth":1150,
- "type":"tileset",
- "version":"1.10"
+{
+	"textures": [
+		{
+			"image": "camino.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 1160,
+				"h": 840
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "camino.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 1150,
+						"h": 800
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 1150,
+						"h": 830
+					},
+					"frame": {
+						"x": 5,
+						"y": 5,
+						"w": 1150,
+						"h": 830
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:38aaf5c3cca9b4e5a32a82af2946165d:b274d730d18d8ad46a94ae7d596f9171:33c36d67912bc6bbed4b35e789f4f6e4$"
+	}
 }

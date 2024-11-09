@@ -2,7 +2,7 @@
 const ES_AR = 'es-AR';
 const EN_US = 'en-US';
 
-const PROJECT_ID = 'cm2ayf5gj0003c5w8ebb1bm0c';
+const PROJECT_ID = ' cm2ayf5gj0003c5w8ebb1bm0c';
 let translations = null;
 let language = ES_AR;
 
@@ -14,7 +14,7 @@ export async function getTranslations(lang, callback) {
         return callback ? callback() : false;
     }
 
-    return await fetch(`https://traducila.vercel.app/projects/api/translations/${PROJECT_ID}/${language}`)
+    return await fetch(`https://traducila.vercel.app/projects/api/translations/${PROJECT_ID}/${language}`,)
     .then(response => response.json())
     .then(data => {
         localStorage.setItem('translations', JSON.stringify(data));
@@ -38,7 +38,7 @@ export function getPhrase(key) {
 }
 
 function isAllowedLanguge(language) {
-    const allowedLanguages = [ES_AR, EN_US, PT_BR, DE_DE];
+    const allowedLanguages = [ES_AR, EN_US, PT_BR, FR_FR, AL_AL];
     return allowedLanguages.includes(language);
 }
 
