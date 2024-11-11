@@ -32,8 +32,11 @@ export class Preloader extends Scene
         this.load.setPath('assets');
         this.load.image('logo', 'menu/logo.png');
 
-        this.load.audio("musicVS", "versus/towerdefense.wav");
-        this.load.audio("musicCOP", "cooperativo/apocalipsis.wav");
+        this.load.audio("vsmusic", "versus/towerdefense.wav");
+        this.load.audio("copmusic", "cooperativo/apocalipsis.wav");
+        this.load.audio('menumusic', 'menu/menumusica.mp3');
+        this.load.audio('inimusic', 'menu/musicainicio.mp3');
+        this.load.audio("clickbutton", "lobby/click.mp3");
 
         this.load.image('langUSButton', 'menu/langUS.png');
         this.load.image('langARButton', 'menu/langAR.png');
@@ -42,7 +45,8 @@ export class Preloader extends Scene
         this.load.image('langBRButton', 'menu/langBR.png');
 
         this.load.image('playButton', 'menu/play.png');
-        this.load.image('background', 'menu/bg.png');
+        this.load.image('PA', 'versus/playagain.png');
+        this.load.video('background', 'menu/bg.mp4');
 
         this.load.image('bg-lob', 'lobby/bg-lobby.png');
         this.load.image('back', 'lobby/backboton.png');

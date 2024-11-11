@@ -10,17 +10,16 @@ export class GameOver extends Scene
 
     create (data)
     {
-
         this.add.image(575, 400, 'bg-lob').setScale(1);
 
-        this.add.text(600, 300, this.getPhrase('End Game'), {
+        this.add.text(600, 200, ('End Game'), {
             fontFamily: 'Arial Black', fontSize: 64, color: '#ffffff',
             stroke: '#000000', strokeThickness: 8,
             align: 'center'
         }).setOrigin(0.5);
 
         //puntaje p1        
-        this.add.text(600, 500, `${this.getPhrase('Score P1')}: ${data.scoreP1}`, {
+        this.add.text(600, 500, `${('Score P1')}: ${data.scoreP1}`, {
             fontFamily: 'Arial Black', 
             fontSize: 48, 
             color: '#ffffff',
@@ -30,7 +29,7 @@ export class GameOver extends Scene
         }).setOrigin(0.5);
 
         //puntaje de p2
-        this.add.text(600, 550, `${this.getPhrase('Score P2')}: ${data.scoreP2}`, {
+        this.add.text(600, 550, `${('Score P2')}: ${data.scoreP2}`, {
             fontFamily: 'Arial Black', 
             fontSize: 48, 
             color: '#ffffff',
@@ -40,7 +39,7 @@ export class GameOver extends Scene
         }).setOrigin(0.5);
 
 
-        this.add.text(600, 400, `${data.winner}`, {
+        this.add.text(600, 400, `${(data.winner)}`, {
             fontFamily: 'Arial Black', 
             fontSize: 56, 
             color: '#ffffff',
@@ -49,11 +48,19 @@ export class GameOver extends Scene
             align: 'center'
         }).setOrigin(0.5);
 
-        this.input.once('pointerdown', () => {
-
-            this.scene.start('MainMenu');
-
+        this.PlayAButton = this.add.image(600, 300, "PA").setInteractive().setScale(0.2).setVisible(true);
+        this.PlayAButton.on('pointerover', () => {
+            this.PlayAButton.setScale(0.19);
         });
+        this.PlayAButton.on('pointerout', () => {
+            this.PlayAButton.setScale(0.2);
+        });
+        this.PlayAButton.on('pointerdown', () => {
+            this.scene.start('Game');
+            this.vsmusic.play();
+            this.clickbutton.play();
+        });
+
     }
 
     getPhrase(key) {

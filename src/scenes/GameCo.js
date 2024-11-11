@@ -150,7 +150,7 @@ export class GameCo extends Scene {
     }
 
     create() {
-    
+        
         const map = this.make.tilemap({ key: 'mapa' });
         const tileset = map.addTilesetImage('atlas_superficie');
         const caminoTileset = map.addTilesetImage('camino');

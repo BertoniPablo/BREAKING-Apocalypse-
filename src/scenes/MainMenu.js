@@ -12,9 +12,26 @@ export class MainMenu extends Scene
         this.player2 = this.p2
     }
 
-    create ()
-    {
-        this.add.image(575, 394, 'background').setScale(1.02);
+    create () {
+        
+        this.inimusic = this.sound.add('inimusic', {
+            volume: 0.5 ,
+        });
+        this.menumusic = this.sound.add('menumusic', {
+            volume: 1 ,
+            loop: true,
+        });
+        this.clickbutton = this.sound.add('clickbutton', {
+            volume: 0.2 ,
+        });
+
+        this.menumusic.play();
+        this.inimusic.play();
+
+        const bgVideo = this.add.video(575, 375, 'background');
+        bgVideo.setScale(0.8);  
+        bgVideo.play(true);      
+        bgVideo.setLoop(true);
         this.add.image(850, 250, 'logo').setScale(1.8);
 
         this.p1 = this.physics.add.sprite(this.posicionp1.x, this.posicionp1.y, 'player1').setScale(0.8);
@@ -30,51 +47,73 @@ export class MainMenu extends Scene
         });
         this.playButton.on('pointerdown', () => {
             this.scene.start('Lobby');
+            this.clickbutton.play();
+            this.inimusic.pause();
         })
         
         this.langARButton = this.add.image(40, 40, "langARButton").setInteractive().setScale(0.4).setVisible(true);
         this.langARButton.on('pointerover', () => {
             this.langARButton.setScale(0.38);
-            this.changeLanguage('es-AR');
+            
         });
         this.langARButton.on('pointerout', () => {
             this.langARButton.setScale(0.4);
+        });
+        this.langARButton.on('pointerdown', () => {
+            this.changeLanguage('es-AR');
+            this.clickbutton.play();
         });
 
         this.langFRButton = this.add.image(100, 40, "langFRButton").setInteractive().setScale(0.36).setVisible(true);
         this.langFRButton.on('pointerover', () => {
             this.langFRButton.setScale(0.34);
-            this.changeLanguage('fr-FR');
+            
         });
         this.langFRButton.on('pointerout', () => {
             this.langFRButton.setScale(0.36);
+        });
+        this.langFRButton.on('pointerdown', () => {
+            this.changeLanguage('fr-FR');
+            this.clickbutton.play();
         });
 
         this.langUSButton = this.add.image(160, 40, "langUSButton").setInteractive().setScale(0.36).setVisible(true);
         this.langUSButton.on('pointerover', () => {
             this.langUSButton.setScale(0.34);
-            this.changeLanguage('en-US');
+            
         });
         this.langUSButton.on('pointerout', () => {
             this.langUSButton.setScale(0.36);
+        });
+        this.langUSButton.on('pointerdown', () => {
+            this.changeLanguage('en-US');
+            this.clickbutton.play();
         });
 
         this.langALButton = this.add.image(220, 40, "langALButton").setInteractive().setScale(0.36).setVisible(true);
         this.langALButton.on('pointerover', () => {
             this.langALButton.setScale(0.34);
-            this.changeLanguage('al-AL');
+            
         });
         this.langALButton.on('pointerout', () => {
             this.langALButton.setScale(0.36);
+        });
+        this.langALButton.on('pointerdown', () => {
+            this.changeLanguage('al-AL');
+            this.clickbutton.play();
         });
 
         this.langBRButton = this.add.image(280, 40, "langBRButton").setInteractive().setScale(0.36).setVisible(true);
         this.langBRButton.on('pointerover', () => {
             this.langBRButton.setScale(0.34);
-            this.changeLanguage('pt-BR');
+            
         });
         this.langBRButton.on('pointerout', () => {
             this.langBRButton.setScale(0.36);
+        });
+        this.langBRButton.on('pointerdown', () => {
+            this.changeLanguage('pt-BR');
+            this.clickbutton.play();
         });
     }
 

@@ -56,12 +56,12 @@ export class Game extends Scene {
             controls: null,
             blocks: []
         };
-        this.timeLeft = 60; 
+        this.timeLeft = 1; 
         this.margin = 19; //margen 
     }
     
     init() {
-        this.timeLeft = 60;
+        this.timeLeft = 1;
         this.player1 = {
             score: 0,
         }
@@ -132,19 +132,6 @@ export class Game extends Scene {
         this.input.keyboard.on('keydown', (event) => {
             this.handleKeyPress(event);
         });
-    }
-
-    update() {
-        if (this.player1.controls.jump.isDown && this.player1.sprite.body.touching.down) {
-            this.player1.sprite.setVelocityY(-400); 
-        }
-        if (this.player2.controls.jump.isDown && this.player2.sprite.body.touching.down) {
-            this.player2.sprite.setVelocityY(-400); 
-        }
-
-        //detecta la primer columna de cada jugador
-        this.checkClosestColumn(this.player1); 
-        this.checkClosestColumn(this.player2);
     }
 
     update() {
