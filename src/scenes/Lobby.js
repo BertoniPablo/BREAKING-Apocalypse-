@@ -21,6 +21,11 @@ export class Lobby extends Scene
 
         this.VSButton.on('pointerdown', () => {
             this.scene.start('Game');
+            this.vsmusic = this.sound.add('musicaVS', {
+                volume: 0.5 ,
+                loop: true
+            });
+            this.vsmusic.play();
         });
 
         this.backButton = this.add.image(40,40, 'back').setInteractive().setScale(0.19).setVisible(true);
@@ -45,6 +50,11 @@ export class Lobby extends Scene
 
         this.COPButton.on('pointerdown', () => {
             this.scene.start('GameCo');
+            this.copmusic = this.sound.add('musicaCOP', {
+                volume: 0.5 ,
+                loop: true
+            });
+            this.copmusic.play();
         });
 
     }

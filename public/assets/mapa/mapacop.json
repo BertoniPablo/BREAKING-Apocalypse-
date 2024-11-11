@@ -39,7 +39,7 @@
          "height":25,
          "id":27,
          "name":"ground",
-         "offsetx":-1,
+         "offsetx":1,
          "offsety":0,
          "opacity":1,
          "type":"tilelayer",
@@ -2051,7 +2051,6 @@
                  "objectgroup":
                     {
                      "draworder":"index",
-                     "id":2,
                      "name":"",
                      "objects":[
                             {

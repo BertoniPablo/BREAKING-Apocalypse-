@@ -113,6 +113,10 @@ export class GameCo extends Scene {
         super('GameCo');
         this.posicionp1 = { x: 300, y: 385 };
         this.posicionp2 = { x: 900, y: 385 };
+        this.vidap1 = 3
+        this.vidap2 = 3
+        this.textvidap1 = null;
+        this.textvidap2 = null;
         this.enContador = false;
         this.cooldown = false; //cooldown
         this.puedeMoverse = true; //movimiento
@@ -132,12 +136,15 @@ export class GameCo extends Scene {
     }
 
     init (){
+        this.vidap1 = 3
+        this.vidap2 = 3
         this.timer1 = 60
         this.limitematerial = 10
         this.material = {
             madera: { count: 0,  limit: this.limitematerial, image: 'madera_' },
             piedra: { count: 0,  limit: this.limitematerial, image:'piedra_'},
             hierro: { count: 0,  limit: this.limitematerial, image: 'hierro_'},
+
         } 
 
     }
@@ -147,7 +154,6 @@ export class GameCo extends Scene {
         const map = this.make.tilemap({ key: 'mapa' });
         const tileset = map.addTilesetImage('atlas_superficie');
         const caminoTileset = map.addTilesetImage('camino');
-
         const caminoLayer = map.createLayer('ground', caminoTileset, 0, 0);
         const layer = map.createLayer('capasup', tileset, 0, 0).setCollisionByProperty({ collides: true });
 
@@ -155,16 +161,21 @@ export class GameCo extends Scene {
         this.uixCollider = this.physics.add.staticImage(575, 25, 'uixcopCollision').setScale(10);
         this.uixCollider.setVisible(false); 
 
+        this.add.image(100, 40, 'corazon');
+        this.add.image(230, 40, 'corazon');
+
+        this.textvidap1 = this.add.text(120, 25, `x${this.vidap1}`, { fontSize: '22px', fill: '#fff', fontFamily: 'Arial Black' });
+        this.textvidap2 = this.add.text(250, 25, `x${this.vidap2}`, { fontSize: '22px', fill: '#fff', fontFamily: 'Arial Black' });
 
         //personajes
         this.p1 = this.physics.add.sprite(this.posicionp1.x, this.posicionp1.y, 'player1');
-        this.p1.setScale(0.41);
+        this.p1.setScale(0.35);
         this.p1.setBounce(0);
         this.p1.setCollideWorldBounds(true);
         this.p1.play ('p1_idle');
 
         this.p2 = this.physics.add.sprite(this.posicionp2.x, this.posicionp2.y, 'player2');
-        this.p2.setScale(0.41);
+        this.p2.setScale(0.35);
         this.p2.setBounce(0);
         this.p2.setCollideWorldBounds(true);
         this.p2.play('p2_idle');
@@ -185,12 +196,12 @@ export class GameCo extends Scene {
 
 
         //zombies
-        this.zombies = this.physics.add.group([this.zombie1, this.zombie2, this.zombie3]);
-
+       
         this.zombie1 = new Zombie(this, 100, 100, 'zombie1', this.p1).setScale(0.21);
         this.zombie2 = new Zombie(this, 300, 200, 'zombie2', this.p2).setScale(0.41);
         this.zombie3 = new Zombie(this, 500, 300, 'zombie3', this.p1).setScale(0.45);
-
+        
+        this.zombies = this.physics.add.group([this.zombie1, this.zombie2, this.zombie3]);
 
         //materiales
         this.materialGroup = this.physics.add.group();
@@ -198,6 +209,11 @@ export class GameCo extends Scene {
         this.material["madera"].text = this.add.text(870, 20, '0', { fontSize: '24px', fontFamily: 'Arial Black' ,fill: '#ffff' });
         this.material["piedra"].text = this.add.text(970, 20, '0', { fontSize: '24px', fontFamily: 'Arial Black' ,fill: '#ffff' });
         this.material["hierro"].text = this.add.text(1070, 20, '0', { fontSize: '24px', fontFamily: 'Arial Black' ,fill: '#ffff' });
+
+        this.add.image('madera_').setScale(1);
+        this.add.image('piedra_').setScale(1);
+        this.add.image('hierro_').setScale(1);
+
 
         this.time.addEvent({
             delay: 4000,
@@ -209,8 +225,11 @@ export class GameCo extends Scene {
         //torres
         this.towers = this.physics.add.group();
         //ubicaciones de construcción
+        this.buildingMarkers = this.add.group();
         this.buildingLocations.forEach(location => {
             const marker = this.add.circle(location.x, location.y, 20, 0xff0000).setAlpha(0.5);
+            marker.setDepth(0); // Mantener detrás de los personajes
+            this.buildingMarkers.add(marker);
             marker.setData('location', location);
         });
 
@@ -229,8 +248,8 @@ export class GameCo extends Scene {
         this.physics.add.overlap(this.p1, this.materialGroup, this.onShapeCollect, null, this);
         this.physics.add.overlap(this.p2, this.materialGroup, this.onShapeCollect, null, this);
 
-        this.physics.add.overlap(this.p1, this.buildingLocations, this.handleBuildingOverlap, null, this);
-        this.physics.add.overlap(this.p2, this.buildingLocations, this.handleBuildingOverlap, null, this);
+        this.physics.add.overlap(this.p1, this.buildingMarkers, this.handleBuildingOverlap, null, this);
+        this.physics.add.overlap(this.p2, this.buildingMarkers, this.handleBuildingOverlap, null, this);
 
         this.physics.add.collider(this.p1, layer);
         this.physics.add.collider(this.p2, layer);
@@ -243,6 +262,22 @@ export class GameCo extends Scene {
         this.startTimer1();
     }
     
+    perderVida(player) {
+        if (player === 1 && this.vidap1 > 0) {
+            this.vidap1--; // Disminuir vidas del Jugador 1
+            this.textvidap1.setText(`x${this.vidap1}`);
+        } else if (player === 2 && this.vidap2 > 0) {
+            this.vidap2--; // Disminuir vidas del Jugador 2
+            this.textvidap2.setText(`x${this.vidap2}`);
+        }
+
+        if (this.vidap1 === 0) {
+            console.log("Jugador 1 ha perdido todas sus vidas.");
+        }
+        if (this.vidap2 === 0) {
+            console.log("Jugador 2 ha perdido todas sus vidas.");
+        }
+    }
     startTimer1() {
         this.remainingTime = 60; 
         this.timerText.setText('Preparación...');
@@ -285,6 +320,10 @@ export class GameCo extends Scene {
     }
 
     update() {
+
+        this.buildingMarkers.children.iterate(marker => {
+            marker.setDepth(0); // Los círculos siempre deben estar debajo
+        });
         
         //actualiza los zombies
         this.zombies.children.iterate(zombie => {
@@ -322,15 +361,15 @@ export class GameCo extends Scene {
         } else {
             this.p1.setVelocityY(0);
         }
-    
         //no movimiento - activa idle
         if (!isP1Moving) {
             this.p1.anims.play('p1_idle', true);  //repite idle
         }
         
         //movimiento p2 
+
         let isP2Moving = false;
-    
+
         if (this.p2.controls.RIGHT.isDown) {
             this.p2.setVelocityX(150);
             this.p2.anims.play('p2_walkright', true);
@@ -342,7 +381,7 @@ export class GameCo extends Scene {
         } else {
             this.p2.setVelocityX(0);
         }
-    
+        
         if (this.p2.controls.UP.isDown) {
             this.p2.setVelocityY(-150);
             this.p2.anims.play('p2_walkup', true);
@@ -354,9 +393,9 @@ export class GameCo extends Scene {
         } else {
             this.p2.setVelocityY(0);
         }
-    
+        
         if (!isP2Moving) {
-            this.p2.anims.play('p2_idle', true);  //repite idle
+            this.p2.anims.play('p2_idle', true);
         }
 
         if (this.zombieSpawned) {
@@ -380,25 +419,24 @@ export class GameCo extends Scene {
     //construcciones
     handleBuildingOverlap(player, marker) {
         const location = marker.getData('location');
-        const availableMaterials = player === this.p1 ? this.material : this.material;
-        
-        if (this.checkMaterials(availableMaterials, 'ballesta')) {
-            this.createTower(location.x, location.y, 'ballesta', player);
-            this.deductMaterials(availableMaterials, 'ballesta');
-        } else if (this.checkMaterials(availableMaterials, 'canon')) {
-            this.createTower(location.x, location.y, 'canon', player);
-            this.deductMaterials(availableMaterials, 'canon');
+        const requiredMaterials = player.buildingType === 'ballesta' 
+            ? { madera: 10, piedra: 5, hierro: 2 } 
+            : { madera: 5, piedra: 6, hierro: 3 };
+
+        if (this.hasRequiredMaterials(requiredMaterials)) {
+            const towerType = player.buildingType === 'ballesta' ? 'ballesta' : 'cañon';
+            const newTower = new Tower(this, location.x, location.y, towerType);
+            this.towers.add(newTower);
+            this.reduceMaterials(requiredMaterials);
         }
     }
-    checkMaterials(materials, towerType) {
-        const cost = towerType === 'ballesta' ? { madera: 10, piedra: 5, hierro: 2 } : { madera: 5, piedra: 6, hierro: 3 };
-        return Object.keys(cost).every(key => materials[key].count >= cost[key]);
+    hasRequiredMaterials(cost) {
+        return Object.keys(cost).every(key => this.material[key].count >= cost[key]);
     }
-    deductMaterials(materials, towerType) {
-        const cost = towerType === 'ballesta' ? { madera: 10, piedra: 5, hierro: 2 } : { madera: 5, piedra: 6, hierro: 3 };
+    reduceMaterials(cost) {
         Object.keys(cost).forEach(key => {
-            materials[key].count -= cost[key];
-            materials[key].text.setText(materials[key].count);
+            this.material[key].count -= cost[key];
+            this.material[key].text.setText(this.material[key].count); // Actualizar visualmente
         });
     }
     createTower(x, y, type, player) {

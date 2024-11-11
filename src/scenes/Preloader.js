@@ -32,6 +32,9 @@ export class Preloader extends Scene
         this.load.setPath('assets');
         this.load.image('logo', 'menu/logo.png');
 
+        this.load.audio("musicVS", "versus/towerdefense.wav");
+        this.load.audio("musicCOP", "cooperativo/apocalipsis.wav");
+
         this.load.image('langUSButton', 'menu/langUS.png');
         this.load.image('langARButton', 'menu/langAR.png');
         this.load.image('langFRButton', 'menu/langFR.png');
@@ -49,6 +52,8 @@ export class Preloader extends Scene
         
         this.load.image ('uixcop', 'cooperativo/uixCOP.png');
         this.load.image('uixcopCollision','cooperativo/collider.png');
+        this.load.image('corazon', 'cooperativo/vida.png');
+        
 
         this.load.image('bg-vs','versus/bgVS.jpeg');
         this.load.image ('uixvs', 'versus/uixVS.png');
@@ -64,17 +69,10 @@ export class Preloader extends Scene
         this.load.image('piedra_','cooperativo/piedra.png');
         this.load.image('hierro_','cooperativo/hierro.png');
 
+
         this.load.image('cañon', 'cooperativo/cañon1.png');
         this.load.image('ballesta', 'cooperativo/ballesta1.png');
  
-        this.load.spritesheet('vidap1', 'cooperativo/vidaP1-sheet.png', {
-            frameWidth: 100,
-            frameHeight: 50,
-        })
-        this.load.spritesheet('vidap2', 'cooperativo/vidaP2-sheet.png', {
-            frameWidth: 100,
-            frameHeight: 50,
-        })
 
         //players
         this.load.spritesheet('P1-idle', 'cooperativo/player1-idle.png', {
@@ -128,49 +126,6 @@ export class Preloader extends Scene
 
     create (){
         //animaciones coop
-
-        //vidas
-        this.anims.create({
-            key: 'vida_p1',
-            frames: this.anims.generateFrameNumbers('vidap1', { start: 0, end: 0}),
-            frameRate: 10,
-        });
-        this.anims.create({
-            key: '2vida_p1',
-            frames: this.anims.generateFrameNumbers('vidap1', { start: 1, end:1}),
-            frameRate: 10,
-        });
-        this.anims.create({
-            key: '1vida_p1',
-            frames: this.anims.generateFrameNumbers('vidap1', { start: 2, end: 2}),
-            frameRate: 10,
-        });
-        this.anims.create({
-            key: '0vida_p1',
-            frames: this.anims.generateFrameNumbers('vidap1', { start: 3, end:3}),
-            frameRate: 10,
-        });
-
-        this.anims.create({
-            key: 'vida_p2',
-            frames: this.anims.generateFrameNumbers('vidap2', { start: 0, end: 0}),
-            frameRate: 10,
-        });
-        this.anims.create({
-            key: '2vida_p2',
-            frames: this.anims.generateFrameNumbers('vidap2', { start: 1, end: 1}),
-            frameRate: 10,
-        });
-        this.anims.create({
-            key: '1vida_p2',
-            frames: this.anims.generateFrameNumbers('vidap2', { start: 2, end: 2}),
-            frameRate: 10,
-        });
-        this.anims.create({
-            key: '0vida_p2',
-            frames: this.anims.generateFrameNumbers('vidap2', { start: 3, end: 3}),
-            frameRate: 10,
-        });
 
         //pjs
         this.anims.create({
