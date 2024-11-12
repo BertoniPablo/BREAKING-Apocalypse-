@@ -36,7 +36,7 @@ export class Preloader extends Scene
         this.load.audio("copmusic", "cooperativo/apocalipsis.wav");
         this.load.audio('menumusic', 'menu/menumusica.mp3');
         this.load.audio('inimusic', 'menu/musicainicio.mp3');
-        this.load.audio("clickbutton", "lobby/click.mp3");
+        this.load.audio("clickbutton", "click.mp3");
 
         this.load.image('langUSButton', 'menu/langUS.png');
         this.load.image('langARButton', 'menu/langAR.png');
@@ -46,6 +46,7 @@ export class Preloader extends Scene
 
         this.load.image('playButton', 'menu/play.png');
         this.load.image('PA', 'versus/playagain.png');
+        this.load.image('BM', 'versus/backmenu.png');
         this.load.video('background', 'menu/bg.mp4');
 
         this.load.image('bg-lob', 'lobby/bg-lobby.png');
@@ -129,6 +130,7 @@ export class Preloader extends Scene
     }
 
     create (){
+
         //animaciones coop
 
         //pjs

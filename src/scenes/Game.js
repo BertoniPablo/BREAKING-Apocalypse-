@@ -132,6 +132,7 @@ export class Game extends Scene {
         this.input.keyboard.on('keydown', (event) => {
             this.handleKeyPress(event);
         });
+
     }
 
     update() {

@@ -10,21 +10,8 @@ export class Lobby extends Scene
     create () {
         this.add.image(575, 394, 'bg-lob').setScale(1.02);
 
-        this.menumusic = this.sound.add('menumusic', {
-            volume: 1 ,
-            loop: true,
-        });
-        
-        this.copmusic = this.sound.add('copmusic', {
-            volume: 0.5 ,
-            loop: true
-        });
+        this.click = this.sound.add('clickbutton', { volume: 0.5 , loop: false });
 
-        this.vsmusic = this.sound.add('vsmusic', {
-            volume: 0.5 ,
-            loop: true
-        });
-    
         this.VSButton = this.add.image(300, 385, "VS").setInteractive().setScale(1).setVisible(true);
         this.VSButton.on('pointerover', () => {
             this.VSButton.setScale(0.97);
@@ -34,9 +21,7 @@ export class Lobby extends Scene
         });
         this.VSButton.on('pointerdown', () => {
             this.scene.start('Game');
-            this.menumusic.stop();
-            this.vsmusic.play();
-            this.clickbutton.play();
+            this.click.play();
         });
 
         this.COPButton = this.add.image(900, 385, "COP").setInteractive().setScale(0.9).setVisible(true);
@@ -48,9 +33,7 @@ export class Lobby extends Scene
         });
         this.COPButton.on('pointerdown', () => {
             this.scene.start('GameCo');
-            this.menumusic.stop();
-            this.copmusic.play();
-            this.clickbutton.play();
+            this.click.play();
         });
 
         this.backButton = this.add.image(40,40, 'back').setInteractive().setScale(0.19).setVisible(true);
@@ -62,7 +45,7 @@ export class Lobby extends Scene
         });
         this.backButton.on('pointerdown', () => {
             this.scene.start('MainMenu');
-            this.clickbutton.play();
+            this.click.play();
         });
 
        
