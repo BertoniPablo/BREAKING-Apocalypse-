@@ -64,15 +64,12 @@ export class Preloader extends Scene
         this.load.image ('uixvs', 'versus/uixVS.png');
         
         //cooperativo
-        
-        this.load.tilemapTiledJSON('mapa', 'mapa/mapacop.json');
-        this.load.atlas('atlas_superficie', 'mapa/atlas_superficie.png', 'mapa/atlas_superficie.json', 64, 64);
-        this.load.image('camino', 'mapa/camino.png', 64, 64);
+        this.load.image('camino', 'cooperativo/mapacop.png');
 
 
-        this.load.image('madera_','cooperativo/madera.png');
-        this.load.image('piedra_','cooperativo/piedra.png');
-        this.load.image('hierro_','cooperativo/hierro.png');
+        this.load.image('madera','cooperativo/madera.png');
+        this.load.image('piedra','cooperativo/piedra.png');
+        this.load.image('hierro','cooperativo/hierro.png');
 
 
         this.load.image('cañon', 'cooperativo/cañon1.png');

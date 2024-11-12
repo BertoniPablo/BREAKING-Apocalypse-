@@ -2,7 +2,7 @@
 const ES_AR = 'es-AR';
 const EN_US = 'en-US';
 
-const PROJECT_ID = ' cm2ayf5gj0003c5w8ebb1bm0c';
+const PROJECT_ID = 'cm2ayf5gj0003c5w8ebb1bm0c';
 let translations = null;
 let language = ES_AR;
 

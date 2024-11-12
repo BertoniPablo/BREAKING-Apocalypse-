@@ -11,6 +11,11 @@ export class Lobby extends Scene
         this.add.image(575, 394, 'bg-lob').setScale(1.02);
 
         this.click = this.sound.add('clickbutton', { volume: 0.5 , loop: false });
+        this.menumusic = this.sound.add('menumusic', { volume: 0.5 , loop: false });
+        this.events.on('shutdown', () => {
+            this.menumusic.pause();
+        });
+
 
         this.VSButton = this.add.image(300, 385, "VS").setInteractive().setScale(1).setVisible(true);
         this.VSButton.on('pointerover', () => {
@@ -22,6 +27,7 @@ export class Lobby extends Scene
         this.VSButton.on('pointerdown', () => {
             this.scene.start('Game');
             this.click.play();
+          
         });
 
         this.COPButton = this.add.image(900, 385, "COP").setInteractive().setScale(0.9).setVisible(true);

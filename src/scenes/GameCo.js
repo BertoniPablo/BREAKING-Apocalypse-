@@ -141,22 +141,27 @@ export class GameCo extends Scene {
         this.timer1 = 60
         this.limitematerial = 10
         this.material = {
-            madera: { count: 0,  limit: this.limitematerial, image: 'madera_' },
-            piedra: { count: 0,  limit: this.limitematerial, image:'piedra_'},
-            hierro: { count: 0,  limit: this.limitematerial, image: 'hierro_'},
-
+            madera: { count: 0,  limit: this.limitematerial, image: 'madera' },
+            piedra: { count: 0,  limit: this.limitematerial, image:'piedra'},
+            hierro: { count: 0,  limit: this.limitematerial, image: 'hierro'},
         } 
+
+        if (!this.copmusic || !this.copmusic.isPlaying) {
+            this.copmusic = this.sound.add('copmusic', { volume: 0.5 , loop: true });
+            this.copmusic.play();
+        } else if (this.copmusic.isPaused) {
+            this.copmusic.resume();
+        }
 
     }
 
     create() {
         
-        const map = this.make.tilemap({ key: 'mapa' });
-        const tileset = map.addTilesetImage('atlas_superficie');
-        const caminoTileset = map.addTilesetImage('camino');
-        const caminoLayer = map.createLayer('ground', caminoTileset, 0, 0);
-        const layer = map.createLayer('capasup', tileset, 0, 0).setCollisionByProperty({ collides: true });
+        this.events.on('shutdown', () => {
+            this.copmusic.pause();
+        });
 
+        this.add.image(575, 400, 'camino').setScale(1.1);
         this.add.image(575, 384.5, 'uixcop').setScale(1); 
         this.uixCollider = this.physics.add.staticImage(575, 25, 'uixcopCollision').setScale(10);
         this.uixCollider.setVisible(false); 
@@ -251,11 +256,6 @@ export class GameCo extends Scene {
         this.physics.add.overlap(this.p1, this.buildingMarkers, this.handleBuildingOverlap, null, this);
         this.physics.add.overlap(this.p2, this.buildingMarkers, this.handleBuildingOverlap, null, this);
 
-        this.physics.add.collider(this.p1, layer);
-        this.physics.add.collider(this.p2, layer);
-        this.physics.add.collider(this.zombies, layer);
-        this.physics.add.collider(this.materialGroup, layer);
-
         this.input.keyboard.on('keydown', (event) => this.handleKeyPress(event));
         this.input.keyboard.on('keyup', (event) => this.handleKeyRelease(event));
         
@@ -278,9 +278,17 @@ export class GameCo extends Scene {
             console.log("Jugador 2 ha perdido todas sus vidas.");
         }
     }
+
     startTimer1() {
         this.remainingTime = 60; 
         this.timerText.setText('Preparación...');
+        const buildText = this.add.text(450, 300, '¡A construir!', {
+            fontSize: '40px', fill: '#ffffff', fontFamily: 'Arial Black', 
+            stroke: '#000000', strokeThickness: 8, 
+        });
+        this.time.delayedCall(2000, () => {
+            buildText.destroy();
+        });
         this.timer1 = this.time.addEvent({
             delay: 60000, 
             callback: this.onTimer1Complete,
@@ -305,6 +313,13 @@ export class GameCo extends Scene {
 
     onTimer1Complete() {
         //siguiente oleada
+        const waveText = this.add.text(500, 200, '¡Vienen las oleadas!', { 
+            fontSize: '32px', fill: '#ffffff', fontFamily: 'Arial Black',
+            stroke: '#000000', strokeThickness: 8, 
+        });
+        this.time.delayedCall(2000, () => {
+            waveText.destroy();
+        });
         if (this.currentWave < this.maxWaves) {
             this.currentWave++;
             this.startTimer2();
@@ -322,7 +337,7 @@ export class GameCo extends Scene {
     update() {
 
         this.buildingMarkers.children.iterate(marker => {
-            marker.setDepth(0); // Los círculos siempre deben estar debajo
+            marker.setDepth(0); //circulos abajo
         });
         
         //actualiza los zombies

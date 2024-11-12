@@ -56,21 +56,31 @@ export class Game extends Scene {
             controls: null,
             blocks: []
         };
-        this.timeLeft = 1; 
+        this.timeLeft = 60; 
         this.margin = 19; //margen 
     }
     
     init() {
-        this.timeLeft = 1;
+        this.timeLeft = 60;
         this.player1 = {
             score: 0,
         }
         this.player2 = {
             score: 0,
         }
+        if (!this.vsmusic || !this.vsmusic.isPlaying) {
+            this.vsmusic = this.sound.add('vsmusic', { volume: 0.5 , loop: true });
+            this.vsmusic.play();
+        } else if (this.vsmusic.isPaused) {
+            this.vsmusic.resume();
+        }
     }
 
     create() {
+        
+        this.events.on('shutdown', () => {
+            this.vsmusic.pause();
+        });
 
         this.add.image(575, 394, 'bg-vs').setScale(1.02);
         this.add.image(575, 384.5, 'uixvs');
@@ -234,25 +244,37 @@ export class Game extends Scene {
         } 
     }
 
-    //funcion para que me reconozca el primer bloque que desde la izquierda y que no permita que empiece a destruir la sigui columna sino destrui completa la anterior.
     handleBlockRemoval(player, key) {
         let blockToRemove = player.blocks.find(block => block.keyremove === key);
         if (blockToRemove) {
-            //guardar posición del bloque
+            // Obtener posición de la fila actual y la fila superior
+            const currentRowY = blockToRemove.y;
+            const upperRowY = currentRowY - blockToRemove.height;  // Asume que los bloques están alineados en una cuadrícula
+    
+            // Comprobar si existen bloques en la fila superior
+            const isUpperRowEmpty = !player.blocks.some(block => block.y === upperRowY);
+    
+            if (!isUpperRowEmpty) {
+                // Si la fila superior no está vacía, no permite la destrucción
+                console.log("No puedes destruir este bloque hasta que destruyas la fila superior.");
+                return;
+            }
+    
+            // Guardar posición del bloque
             const x = blockToRemove.x;
             const y = blockToRemove.y;
             const currentType = blockToRemove.type;
     
+            // Destruir el bloque y actualizar la lista de bloques del jugador
             blockToRemove.destroy();
             player.blocks = player.blocks.filter(block => block !== blockToRemove);  
+    
+            // Regenerar bloque aleatorio tras un retraso
             const blockTypes = ['tierra', 'madera', 'piedra'];
             let newType = currentType;
-            
             while (newType === currentType) {
                 newType = blockTypes[Phaser.Math.Between(0, blockTypes.length - 1)];
             }
-            
-            //regenerar bloque aleatorio 
             this.time.addEvent({
                 delay: 9000,  
                 callback: () => {
@@ -262,11 +284,13 @@ export class Game extends Scene {
                 callbackScope: this
             });
     
+            // Actualizar puntuación
             player.score += 10;
             player.scoreText.setText(` ${player.score}`);
         }
     }
-
+    
+    
     updateTimer() {
         this.timeLeft--;
         this.timerText.setText(`${this.timeLeft}`);

@@ -13,8 +13,6 @@ export class MainMenu extends Scene
     }
     
     init () {
-
-
         if (!this.inimusic || !this.inimusic.isPlaying) {
             this.inimusic = this.sound.add('inimusic', { volume: 0.5 , loop: true });
             this.inimusic.play();
@@ -27,12 +25,13 @@ export class MainMenu extends Scene
         } else if (this.menumusic.isPaused) {
             this.menumusic.resume();
         }
-        
-
     }
     create () {
 
-        this.click = this.sound.add('clickbutton', { volume: 0.5 , loop: false });
+        this.click = this.sound.add('clickbutton', { volume: 0.2 , loop: false });
+        this.events.on('shutdown', () => {
+            this.inimusic.pause();
+        });
 
         const bgVideo = this.add.video(575, 375, 'background');
         bgVideo.setScale(0.8);  
