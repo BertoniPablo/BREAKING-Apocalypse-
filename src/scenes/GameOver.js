@@ -1,30 +1,25 @@
 import { Scene } from 'phaser';
-import { getPhrase } from '../Services/translation';
+import { getPhrase } from '../Services/translations';
 
 export class GameOver extends Scene
 {
     constructor ()
     {
         super('GameOver');
-        this.applyTranslations = new translations();
-    }
-
-    getPhrase(key) {
-        return this.applyTranslations.translations['en'][key] || key;
     }
 
     create (data)
     {
         this.add.image(575, 400, 'bg-lob').setScale(1);
 
-        this.add.text(600, 200, getPhrase('End Game'), {
+        this.add.text(600, 200, ('End Game'), {
             fontFamily: 'Arial Black', fontSize: 64, color: '#ffffff',
             stroke: '#000000', strokeThickness: 8,
             align: 'center'
         }).setOrigin(0.5);
 
         //puntaje p1        
-        this.add.text(600, 500, `${getPhrase('Score P1')}: ${data.scoreP1}`, {
+        this.add.text(600, 500, `${('Score P1')}: ${data.scoreP1}`, {
             fontFamily: 'Arial Black', 
             fontSize: 48, 
             color: '#ffffff',
@@ -34,7 +29,7 @@ export class GameOver extends Scene
         }).setOrigin(0.5);
 
         //puntaje de p2
-        this.add.text(600, 550, `${getPhrase('Score P2')}: ${data.scoreP2}`, {
+        this.add.text(600, 550, `${('Score P2')}: ${data.scoreP2}`, {
             fontFamily: 'Arial Black', 
             fontSize: 48, 
             color: '#ffffff',
@@ -44,7 +39,7 @@ export class GameOver extends Scene
         }).setOrigin(0.5);
 
 
-        this.add.text(600, 400, `${getPhrase(data.winner)}`, {
+        this.add.text(600, 400, `${(data.winner)}`, {
             fontFamily: 'Arial Black', 
             fontSize: 56, 
             color: '#ffffff',

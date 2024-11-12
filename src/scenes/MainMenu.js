@@ -1,5 +1,5 @@
 import { Scene } from 'phaser';
-import { getPhrase, getTranslations } from '../Services/translation';
+import { getPhrase, getTranslations } from '../Services/translations';
 
 export class MainMenu extends Scene
 {
