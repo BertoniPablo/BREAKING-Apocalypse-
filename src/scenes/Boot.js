@@ -17,9 +17,9 @@ export class Boot extends Scene
 
     create ()
     {
-        const bgVideo = this.add.video(575, 394, 'background');
-        bgVideo.setScale(0.9);  // Adjust the scale if needed
-        bgVideo.play(true);      // Start the video with looping enabled
+        const bgVideo = this.add.video(575, 375, 'background');
+        bgVideo.setScale(0.8);  
+        bgVideo.play(true);      
         bgVideo.setLoop(true);
         this.scene.start('Preloader');
     }
