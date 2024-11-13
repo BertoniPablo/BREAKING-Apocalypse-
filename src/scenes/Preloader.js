@@ -33,6 +33,7 @@ export class Preloader extends Scene
         this.load.image('logo', 'menu/logo.png');
 
         this.load.audio("vsmusic", "versus/towerdefense.wav");
+        this.load.audio('gomusic', 'versus/gameO.mp3');
         this.load.audio("copmusic", "cooperativo/apocalipsis.wav");
         this.load.audio('menumusic', 'menu/menumusica.mp3');
         this.load.audio('inimusic', 'menu/musicainicio.mp3');

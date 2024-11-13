@@ -8,9 +8,20 @@ export class GameOver extends Scene
         super('GameOver');
     }
 
+    init (){
+        if (!this.gomusic || !this.gomusic.isPlaying) {
+            this.gomusic = this.sound.add('gomusic', { volume: 0.5 , loop: false });
+            this.gomusic.play();
+        } else if (this.gomusic.isPaused) {
+            this.gomusic.resume();
+        }
+    }
     create (data)
     {
-        this.add.image(575, 400, 'bg-lob').setScale(1);
+        this.events.on('shutdown', () => {
+            this.gomusic.pause();
+        });
+        this.add.image(575, 400, 'bg-lob').setScale(1.1);
         this.click = this.sound.add('clickbutton', { volume: 0.5 , loop: false });
 
         this.add.text(600, 200, getPhrase ('End Game'), {

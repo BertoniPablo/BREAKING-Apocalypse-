@@ -31,6 +31,7 @@ export class MainMenu extends Scene
         this.click = this.sound.add('clickbutton', { volume: 0.2 , loop: false });
         this.events.on('shutdown', () => {
             this.inimusic.pause();
+            this.menumusic.pause();
         });
 
         const bgVideo = this.add.video(575, 375, 'background');

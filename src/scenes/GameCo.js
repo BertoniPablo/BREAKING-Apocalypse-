@@ -1,4 +1,5 @@
 import { Scene } from 'phaser';
+import { getPhrase } from '../Services/translations';
 
 class Zombie extends Phaser.Physics.Arcade.Sprite {
     constructor(scene, x, y, type, player) {
@@ -282,7 +283,7 @@ export class GameCo extends Scene {
     startTimer1() {
         this.remainingTime = 60; 
         this.timerText.setText('Preparación...');
-        const buildText = this.add.text(450, 300, '¡A construir!', {
+        const buildText = this.add.text.getPhrase(450, 300, '¡Build!', {
             fontSize: '40px', fill: '#ffffff', fontFamily: 'Arial Black', 
             stroke: '#000000', strokeThickness: 8, 
         });
@@ -313,7 +314,7 @@ export class GameCo extends Scene {
 
     onTimer1Complete() {
         //siguiente oleada
-        const waveText = this.add.text(500, 200, '¡Vienen las oleadas!', { 
+        const waveText = this.add.text.getPhrase(500, 200, '¡The waves are coming!', { 
             fontSize: '32px', fill: '#ffffff', fontFamily: 'Arial Black',
             stroke: '#000000', strokeThickness: 8, 
         });
@@ -451,7 +452,7 @@ export class GameCo extends Scene {
     reduceMaterials(cost) {
         Object.keys(cost).forEach(key => {
             this.material[key].count -= cost[key];
-            this.material[key].text.setText(this.material[key].count); // Actualizar visualmente
+            this.material[key].text.setText(this.material[key].count); //actualizar
         });
     }
     createTower(x, y, type, player) {

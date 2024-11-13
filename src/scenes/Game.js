@@ -96,15 +96,15 @@ export class Game extends Scene {
     
         const screenWidth = this.game.config.width;
         const halfScreenWidth = screenWidth / 2;
-        const blockSize = 32;
+        const blockSize = 30;
         
 
-        // Ajustamos los límites de los bloques para ambos jugadores
-        const player1StartX = 0; // Comienza desde el borde izquierdo de la pantalla
-        const player1EndX = halfScreenWidth; // Límite hasta la mitad de la pantalla para el jugador 1
+        //límites de bloques
+        const player1StartX = 1; //desde el borde izquierdo de la pantalla
+        const player1EndX = halfScreenWidth; //hasta la mitad de la pantalla
 
-        const player2StartX = halfScreenWidth; // Comienza desde la mitad de la pantalla para el jugador 2
-        const player2EndX = screenWidth; // Límite hasta el borde derecho de la pantalla
+        const player2StartX = halfScreenWidth; //desde la mitad de la pantalla
+        const player2EndX = screenWidth; //hasta el borde derecho de la pantalla
 
         // Creamos los bloques para cada jugador usando los límites ajustados
         this.createBlocksForPlayer(this.player1, player1StartX, player1EndX, 1);
@@ -244,6 +244,7 @@ export class Game extends Scene {
         } 
     }
 
+    
     handleBlockRemoval(player, key) {
         let blockToRemove = player.blocks.find(block => block.keyremove === key);
         if (blockToRemove) {
@@ -290,7 +291,7 @@ export class Game extends Scene {
         }
     }
     
-    
+
     updateTimer() {
         this.timeLeft--;
         this.timerText.setText(`${this.timeLeft}`);
