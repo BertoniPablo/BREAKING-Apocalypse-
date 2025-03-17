@@ -157,12 +157,11 @@ export class GameCo extends Scene {
     }
 
     create() {
-        
+        ñ
         this.events.on('shutdown', () => {
             this.copmusic.pause();
         });
 
-        this.add.image(575, 400, 'camino').setScale(1.1);
         this.add.image(575, 384.5, 'uixcop').setScale(1); 
         this.uixCollider = this.physics.add.staticImage(575, 25, 'uixcopCollision').setScale(10);
         this.uixCollider.setVisible(false); 
@@ -172,6 +171,16 @@ export class GameCo extends Scene {
 
         this.textvidap1 = this.add.text(120, 25, `x${this.vidap1}`, { fontSize: '22px', fill: '#fff', fontFamily: 'Arial Black' });
         this.textvidap2 = this.add.text(250, 25, `x${this.vidap2}`, { fontSize: '22px', fill: '#fff', fontFamily: 'Arial Black' });
+
+        //mundo
+        const map = this.make.tilemap({ key: 'mapajuego' });
+
+        const tilesetCamino = map.addTilesetImage('caminojuego', 'camino2');
+        map.createLayer("camino", tilesetCamino);
+
+        const tilesetSup = map.addTilesetImage('atlas_superficie', 'atlas');
+        const capaSupererior = map.createLayer("capasup", tilesetSup);
+        capaSupererior.setCollisionByProperty({ collides: true });
 
         //personajes
         this.p1 = this.physics.add.sprite(this.posicionp1.x, this.posicionp1.y, 'player1');
