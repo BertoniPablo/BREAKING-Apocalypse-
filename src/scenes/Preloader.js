@@ -61,9 +61,10 @@ export class Preloader extends Scene {
     this.load.image("caminojuego", "tilemap/camino_juego.png");
     this.load.image("atlas", "tilemap/atlas_superficie.png");
 
-    this.load.image("madera", "cooperativo/madera.png");
-    this.load.image("piedra", "cooperativo/piedra.png");
-    this.load.image("hierro", "cooperativo/hierro.png");
+    this.load.image("balas", "cooperativo/balas.png");
+    this.load.image("flechas", "cooperativo/flechas.png");
+    this.load.image("baladisp", "cooperativo/bala_disp.png");
+    this.load.image("flechadisp", "cooperativo/flecha_disp.png");
 
     this.load.image("cañon", "cooperativo/cañon1.png");
     this.load.image("ballesta", "cooperativo/ballesta1.png");

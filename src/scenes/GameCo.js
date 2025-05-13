@@ -60,53 +60,52 @@ class Tower extends Phaser.GameObjects.Sprite {
   constructor(scene, x, y, type) {
     super(scene, x, y, type);
     this.scene = scene;
-    this.type = type;
+    this.type = type; // "flecha" o "bala"
+    this.ammo = 0;
+    this.range = 200;
 
-    this.scene.add.existing(this);
-    this.scene.physics.add.existing(this);
+    scene.add.existing(this);
 
-    this.setActive(true).setVisible(true);
-    this.shootCooldown = 1000; // Tiempo entre disparos en ms
-    this.lastShotTime = 0;
+    this.shootTimer = scene.time.addEvent({
+      delay: 1000,
+      callback: this.tryToShoot,
+      callbackScope: this,
+      loop: true,
+    });
+  }
 
-    // Configurar el tipo de torre
-    switch (type) {
-      case "ballesta":
-        this.range = 200;
-        this.materialCost = { madera: 10, piedra: 5, hierro: 2 };
-        break;
-      case "cañon":
-        this.range = 250;
-        this.materialCost = { madera: 5, piedra: 6, hierro: 3 };
-        break;
-      default:
-        this.range = 100;
-        this.materialCost = { madera: 5, piedra: 5, hierro: 2 };
+  tryToShoot() {
+    if (this.ammo > 0) {
+      // buscar target y disparar
+      const zombies = this.scene.zombies.getChildren();
+      const target = zombies.find(
+        (z) =>
+          Phaser.Math.Distance.Between(this.x, this.y, z.x, z.y) <= this.range
+      );
+      if (target) {
+        this.shoot(target);
+        this.ammo--;
+      }
     }
   }
 
   shoot(target) {
-    if (this.scene.time.now - this.lastShotTime > this.shootCooldown) {
-      this.lastShotTime = this.scene.time.now;
-      const line = this.scene.add
-        .line(0, 0, this.x, this.y, target.x, target.y, 0xff0000)
-        .setOrigin(0, 0)
-        .setLineWidth(2);
-      this.scene.time.delayedCall(100, () => line.destroy());
-      target.receiveDamage(1);
-    }
+    const key = this.scene.itemSprites[this.type].disparo;
+    const proj = this.scene.physics.add.sprite(this.x, this.y, key).setDepth(1);
+    // mover proyectil hacia el objetivo
+    this.scene.physics.moveToObject(
+      proj,
+      target,
+      this.type === "flecha" ? 300 : 200
+    );
   }
 
-  update(zombies) {
-    const target = zombies.getChildren().find((zombie) => {
-      return (
-        Phaser.Math.Distance.Between(this.x, this.y, zombie.x, zombie.y) <=
-        this.range
-      );
-    });
-    if (target) {
-      this.shoot(target);
-    }
+  addAmmo(amount) {
+    this.ammo += amount;
+  }
+
+  update() {
+    // El disparo está gestionado por tryToShoot periódico
   }
 }
 
@@ -133,19 +132,13 @@ export class GameCo extends Scene {
       { x: 400, y: 300 },
       { x: 700, y: 300 }, // Puntos de construcción
     ];
-    this.towers = null;
+    this.tower = null;
   }
 
   init() {
     this.vidap1 = 3;
     this.vidap2 = 3;
     this.timer1 = 60;
-    this.limitematerial = 10;
-    this.material = {
-      madera: { count: 0, limit: this.limitematerial, image: "madera" },
-      piedra: { count: 0, limit: this.limitematerial, image: "piedra" },
-      hierro: { count: 0, limit: this.limitematerial, image: "hierro" },
-    };
 
     if (!this.copmusic || !this.copmusic.isPlaying) {
       this.copmusic = this.sound.add("copmusic", { volume: 0.5, loop: true });
@@ -160,15 +153,16 @@ export class GameCo extends Scene {
       this.copmusic.pause();
     });
 
+    //UIX
     this.add.image(575, 384.5, "uixcop").setScale(1);
     this.uixCollider = this.physics.add
       .staticImage(575, 25, "uixcopCollision")
       .setScale(10);
     this.uixCollider.setVisible(false);
 
+    //data vida
     this.add.image(100, 40, "corazon");
     this.add.image(230, 40, "corazon");
-
     this.textvidap1 = this.add.text(120, 25, `x${this.vidap1}`, {
       fontSize: "22px",
       fill: "#fff",
@@ -188,16 +182,7 @@ export class GameCo extends Scene {
 
     const tilesetSup = map.addTilesetImage("atlas_superficie", "atlas");
     const capaSup = map.createLayer("capasup", tilesetSup);
-    if (capaSup) {
-      capaSup.setCollisionByProperty({ collides: true });
-    } else {
-      console.warn('No existe la capa "capasup" en el mapa');
-    }
-
-    console.log(
-      "Capas encontradas en JSON:",
-      map.layers.map((l) => l.name)
-    );
+    capaSup.setCollisionByProperty({ collides: true });
 
     //personajes
     this.p1 = this.physics.add.sprite(
@@ -220,13 +205,13 @@ export class GameCo extends Scene {
     this.p2.setCollideWorldBounds(true);
     this.p2.play("p2_idle");
 
+    //controles
     this.p1.controls = this.input.keyboard.addKeys({
       LEFT: "A",
       UP: "W",
       RIGHT: "D",
       DOWN: "S",
     });
-
     this.p2.controls = this.input.keyboard.addKeys({
       LEFT: "LEFT",
       UP: "UP",
@@ -235,62 +220,57 @@ export class GameCo extends Scene {
     });
 
     //zombies
-
-    this.zombie1 = new Zombie(this, 100, 100, "zombie1", this.p1).setScale(
-      0.21
-    );
-    this.zombie2 = new Zombie(this, 300, 200, "zombie2", this.p2).setScale(
-      0.41
-    );
-    this.zombie3 = new Zombie(this, 500, 300, "zombie3", this.p1).setScale(
-      0.45
-    );
-
     this.zombies = this.physics.add.group([
-      this.zombie1,
-      this.zombie2,
-      this.zombie3,
+      (this.zombie1 = new Zombie(this, 100, 100, "zombie1", this.p1).setScale(
+        0.21
+      )),
+      (this.zombie2 = new Zombie(this, 300, 200, "zombie2", this.p2).setScale(
+        0.41
+      )),
+      (this.zombie3 = new Zombie(this, 500, 300, "zombie3", this.p1).setScale(
+        0.45
+      )),
     ]);
 
-    //materiales
-    this.materialGroup = this.physics.add.group();
+    //municion
+    this.itemSprites = {
+      flecha: {
+        recolectable: "flechas",
+        disparo: "flechadisp",
+      },
+      bala: {
+        recolectable: "balas",
+        disparo: "baladisp",
+      },
+    };
 
-    this.material["madera"].text = this.add.text(870, 20, "0", {
-      fontSize: "24px",
-      fontFamily: "Arial Black",
-      fill: "#ffff",
-    });
-    this.material["piedra"].text = this.add.text(970, 20, "0", {
-      fontSize: "24px",
-      fontFamily: "Arial Black",
-      fill: "#ffff",
-    });
-    this.material["hierro"].text = this.add.text(1070, 20, "0", {
-      fontSize: "24px",
-      fontFamily: "Arial Black",
-      fill: "#ffff",
-    });
+    this.ammoGroup = this.physics.add.group();
 
-    this.add.image("madera_").setScale(1);
-    this.add.image("piedra_").setScale(1);
-    this.add.image("hierro_").setScale(1);
-
-    this.time.addEvent({
-      delay: 4000,
-      callback: this.spawnMaterial,
-      callbackScope: this,
-      loop: true,
-    });
+    for (let i = 0; i < 5; i++) {
+      this.spawnCollectibleAmmo(
+        "flecha",
+        Phaser.Math.Between(100, 1100),
+        Phaser.Math.Between(100, 600)
+      );
+      this.spawnCollectibleAmmo(
+        "bala",
+        Phaser.Math.Between(100, 1100),
+        Phaser.Math.Between(100, 600)
+      );
+    }
 
     //torres
-    this.towers = this.physics.add.group();
+    this.towers = this.physics.add.group({
+      classType: Tower,
+      runChildUpdate: true,
+    });
     //ubicaciones de construcción
     this.buildingMarkers = this.add.group();
     this.buildingLocations.forEach((location) => {
       const marker = this.add
         .circle(location.x, location.y, 20, 0xff0000)
         .setAlpha(0.5);
-      marker.setDepth(0); // Mantener detrás de los personajes
+      marker.setDepth(0);
       this.buildingMarkers.add(marker);
       marker.setData("location", location);
     });
@@ -304,6 +284,10 @@ export class GameCo extends Scene {
     //colisiones
     this.physics.add.collider(this.p1, capaSup);
     this.physics.add.collider(this.p2, capaSup);
+    this.physics.add.collider(this.zombies, capaSup);
+    this.physics.add.collider(this.ammoGroup, capaSup);
+    this.physics.add.collider(this.towers, capaSup);
+
     this.physics.add.collider(this.p1, this.p2);
     this.physics.add.collider(
       this.p1,
@@ -320,22 +304,15 @@ export class GameCo extends Scene {
       this
     );
 
-    this.physics.add.collider(this.materialGroup, this.uixCollider);
+    this.physics.add.collider(this.ammoGroup, this.uixCollider);
     this.physics.add.collider(this.zombies, this.uixCollider);
     this.physics.add.collider(this.p1, this.uixCollider);
     this.physics.add.collider(this.p2, this.uixCollider);
 
     this.physics.add.overlap(
-      this.p1,
-      this.materialGroup,
-      this.onShapeCollect,
-      null,
-      this
-    );
-    this.physics.add.overlap(
-      this.p2,
-      this.materialGroup,
-      this.onShapeCollect,
+      [this.p1, this.p2],
+      this.ammoGroup,
+      this.onAmmoCollect,
       null,
       this
     );
@@ -355,10 +332,34 @@ export class GameCo extends Scene {
       this
     );
 
+    //presion teclas
     this.input.keyboard.on("keydown", (event) => this.handleKeyPress(event));
     this.input.keyboard.on("keyup", (event) => this.handleKeyRelease(event));
 
     this.startTimer1();
+  }
+
+  //spawn municiones
+  spawnCollectibleAmmo(type, x, y) {
+    const key = this.itemSprites[type].recolectable;
+    const ammo = this.physics.add
+      .sprite(x, y, key)
+      .setData("type", type)
+      .setScale(0.16)
+      .setCollideWorldBounds(true);
+
+    this.ammoGroup.add(ammo);
+  }
+
+  //recoleccion municion
+  onAmmoCollect(player, ammoSprite) {
+    const type = ammoSprite.getData("type");
+    this.towers.getChildren().forEach((tower) => {
+      if (tower.type === type) {
+        tower.addAmmo(1);
+      }
+    });
+    ammoSprite.destroy();
   }
 
   perderVida(player) {
@@ -378,6 +379,7 @@ export class GameCo extends Scene {
     }
   }
 
+  //temporizadores
   startTimer1() {
     this.remainingTime = 60;
     this.timerText.setText("Preparación...");
@@ -444,6 +446,7 @@ export class GameCo extends Scene {
     this.startTimer1();
   }
 
+  //upd
   update() {
     this.buildingMarkers.children.iterate((marker) => {
       marker.setDepth(0); //circulos abajo
@@ -538,38 +541,23 @@ export class GameCo extends Scene {
     });
   }
 
-  //construcciones
+  // construcciones
   handleBuildingOverlap(player, marker) {
     const location = marker.getData("location");
-    const requiredMaterials =
-      player.buildingType === "ballesta"
-        ? { madera: 10, piedra: 5, hierro: 2 }
-        : { madera: 5, piedra: 6, hierro: 3 };
+    const towerType = player.buildingType === "ballesta" ? "ballesta" : "cañon";
+    const newTower = new Tower(this, location.x, location.y, towerType);
 
-    if (this.hasRequiredMaterials(requiredMaterials)) {
-      const towerType =
-        player.buildingType === "ballesta" ? "ballesta" : "cañon";
-      const newTower = new Tower(this, location.x, location.y, towerType);
-      this.towers.add(newTower);
-      this.reduceMaterials(requiredMaterials);
-    }
+    // Inicializar sin munición
+    newTower.ammo = 0; // Flechas o balas, según el tipo
+    this.towers.add(newTower);
   }
-  hasRequiredMaterials(cost) {
-    return Object.keys(cost).every(
-      (key) => this.material[key].count >= cost[key]
-    );
-  }
-  reduceMaterials(cost) {
-    Object.keys(cost).forEach((key) => {
-      this.material[key].count -= cost[key];
-      this.material[key].text.setText(this.material[key].count); //actualizar
-    });
-  }
+
   createTower(x, y, type, player) {
     const tower = new Tower(this, x, y, type);
     this.towers.add(tower);
   }
 
+  //zombies logica
   spawnZombiesWave() {
     let zombiesToSpawn = [];
 
@@ -610,18 +598,6 @@ export class GameCo extends Scene {
     });
   }
 
-  spawnMaterial() {
-    const types = Object.keys(this.material);
-    const type = types[Phaser.Math.Between(0, types.length - 1)];
-
-    const x = Phaser.Math.Between(40, this.game.config.width - 40);
-    const y = Phaser.Math.Between(40, this.game.config.height - 40);
-
-    const material = this.materialGroup.create(x, y, type);
-    material.setData("type", type);
-    material.setCollideWorldBounds(true);
-  }
-
   spawnZombies() {
     //generar zombies
     if (this.zombies.countActive(true) < 5) {
@@ -633,19 +609,7 @@ export class GameCo extends Scene {
     }
   }
 
-  onShapeCollect(player, material) {
-    const type = material.getData("type");
-    const materialInfo = this.material[type];
-
-    if (materialInfo.count < materialInfo.limit) {
-      materialInfo.count += 1;
-      material.destroy();
-      materialInfo.text.setText(materialInfo.count);
-    } else {
-      material.destroy();
-    }
-  }
-
+  //movimiento
   handleKeyPress(event) {
     if (event.key === "a") {
       this.p1.anims.play("p1_walkleft");
@@ -682,6 +646,7 @@ export class GameCo extends Scene {
     }
   }
 
+  //caminar por mapa
   iniciarCooldown() {
     this.cooldownP1 = true;
     this.time.delayedCall(350, () => {
