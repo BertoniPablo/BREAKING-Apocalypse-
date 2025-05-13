@@ -32,9 +32,10 @@ const config = {
         MainMenu,
         Lobby,
         GameCo,
-        Game,
+        Game, 
+        GameOver2,
         GameOver,
-        GameOver2
+       
     ]
 };
 
