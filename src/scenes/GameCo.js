@@ -178,11 +178,11 @@ export class GameCo extends Scene {
     const map = this.make.tilemap({ key: "mapajuego" });
 
     const tilesetCamino = map.addTilesetImage("camino", "caminojuego");
-    map.createLayer("camino", tilesetCamino);
+    map.createLayer("camino", tilesetCamino).setDepth(-1);
 
     const tilesetSup = map.addTilesetImage("atlas_superficie", "atlas");
     const capaSup = map.createLayer("capasup", tilesetSup);
-    capaSup.setCollisionByProperty({ collides: true });
+    capaSup.setCollisionByProperty({ collides: true }).setDepth(-1);
 
     //personajes
     this.p1 = this.physics.add.sprite(
@@ -265,15 +265,16 @@ export class GameCo extends Scene {
       runChildUpdate: true,
     });
     //ubicaciones de construcción
-    this.buildingMarkers = this.add.group();
-    this.buildingLocations.forEach((location) => {
-      const marker = this.add
-        .circle(location.x, location.y, 20, 0xff0000)
-        .setAlpha(0.5);
-      marker.setDepth(0);
-      this.buildingMarkers.add(marker);
-      marker.setData("location", location);
-    });
+    this.towers = this.add.group({ classType: Tower, runChildUpdate: true });
+    const positions = [
+      { x: 200, y: 300, type: "ballesta" },
+      { x: 400, y: 300, type: "ballesta" },
+      { x: 800, y: 300, type: "cañon" },
+      { x: 1000, y: 300, type: "cañon" },
+    ];
+    positions.forEach((p) =>
+      this.towers.add(new Tower(this, p.x, p.y, p.type))
+    );
 
     this.timerText = this.add.text(590, 20, "60", {
       fontSize: "24px",
@@ -313,6 +314,13 @@ export class GameCo extends Scene {
       [this.p1, this.p2],
       this.ammoGroup,
       this.onAmmoCollect,
+      null,
+      this
+    );
+    this.physics.add.overlap(
+      [this.p1, this.p2],
+      this.towers,
+      this.onReloadAmmo,
       null,
       this
     );
@@ -360,6 +368,16 @@ export class GameCo extends Scene {
       }
     });
     ammoSprite.destroy();
+  }
+
+  //recarga municion
+  onReloadAmmo(player, tower) {
+    const t = tower.type;
+    const inv = player.ammoInventory[t];
+    if (inv > 0) {
+      tower.addAmmo(inv);
+      player.ammoInventory[t] = 0;
+    }
   }
 
   perderVida(player) {
@@ -448,14 +466,14 @@ export class GameCo extends Scene {
 
   //upd
   update() {
-    this.buildingMarkers.children.iterate((marker) => {
-      marker.setDepth(0); //circulos abajo
-    });
-
-    //actualiza los zombies
-    this.zombies.children.iterate((zombie) => {
-      zombie.update();
-    });
+    //marcadores
+    if (this.buildingMarkers) {
+      this.buildingMarkers.children.iterate((marker) => marker.setDepth(0));
+    }
+    //actualiza zombies
+    if (this.zombies && this.zombies.getChildren) {
+      this.zombies.getChildren().forEach((zombie) => zombie.update());
+    }
 
     if (!this.puedeMoverse || this.enContador) {
       return;
@@ -463,7 +481,6 @@ export class GameCo extends Scene {
 
     //movimiento p1
     let isP1Moving = false;
-
     if (this.p1.controls.RIGHT.isDown) {
       this.p1.setVelocityX(150);
       this.p1.anims.play("p1_walkright", true);
@@ -475,7 +492,6 @@ export class GameCo extends Scene {
     } else {
       this.p1.setVelocityX(0);
     }
-
     if (this.p1.controls.UP.isDown) {
       this.p1.setVelocityY(-150);
       this.p1.anims.play("p1_walkup", true);
@@ -487,15 +503,12 @@ export class GameCo extends Scene {
     } else {
       this.p1.setVelocityY(0);
     }
-    //no movimiento - activa idle
     if (!isP1Moving) {
-      this.p1.anims.play("p1_idle", true); //repite idle
+      this.p1.anims.play("p1_idle", true);
     }
 
     //movimiento p2
-
     let isP2Moving = false;
-
     if (this.p2.controls.RIGHT.isDown) {
       this.p2.setVelocityX(150);
       this.p2.anims.play("p2_walkright", true);
@@ -507,7 +520,6 @@ export class GameCo extends Scene {
     } else {
       this.p2.setVelocityX(0);
     }
-
     if (this.p2.controls.UP.isDown) {
       this.p2.setVelocityY(-150);
       this.p2.anims.play("p2_walkup", true);
@@ -519,15 +531,11 @@ export class GameCo extends Scene {
     } else {
       this.p2.setVelocityY(0);
     }
-
     if (!isP2Moving) {
       this.p2.anims.play("p2_idle", true);
     }
 
-    if (this.zombieSpawned) {
-      this.spawnZombies();
-    }
-
+    //temporizadores y texto
     if (this.timer1 && !this.timer1.hasDispatched) {
       this.remainingTime -= this.game.loop.delta / 1000;
       this.timerText.setText(` ${Math.max(0, Math.ceil(this.remainingTime))}`);
@@ -536,12 +544,13 @@ export class GameCo extends Scene {
       this.timerText.setText(` ${Math.max(0, Math.ceil(this.remainingTime))}`);
     }
 
-    this.towers.getChildren().forEach((tower) => {
-      tower.update(this.zombies);
-    });
+    //actualiza torres
+    if (this.towers && this.towers.getChildren) {
+      this.towers.getChildren().forEach((tower) => tower.update());
+    }
   }
 
-  // construcciones
+  //recarga sistem
   handleBuildingOverlap(player, marker) {
     const location = marker.getData("location");
     const towerType = player.buildingType === "ballesta" ? "ballesta" : "cañon";
@@ -592,7 +601,7 @@ export class GameCo extends Scene {
   }
 
   clearZombies() {
-    this.zombies.children.iterate((zombie) => {
+    this.zombies.getChildren.iterate((zombie) => {
       zombie.setActive(false).setVisible(false);
       zombie.destroy();
     });
