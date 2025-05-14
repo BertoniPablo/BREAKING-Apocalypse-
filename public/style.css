@@ -20,7 +20,7 @@ body {
   align-items: center;
   justify-content: center;
   height: 100vh;
-  background: url("menu/fondologin.png") no-repeat center center;
+  background: url("assets/menu/fondologin.png") no-repeat center center;
   background-size: cover;
   font-family: "Press Start 2P", sans-serif;
   color: white;
