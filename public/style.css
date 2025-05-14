@@ -1,15 +1,56 @@
 body {
-    margin: 0;
-    padding: 0;
-    color: rgba(255, 255, 255, 0.87);
-    background-color: #000000;
+  margin: 0;
+  padding: 0;
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #000000;
 }
 
 #app {
-    width: 100%;
-    height: 100vh;
-    overflow: hidden;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.login-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background: url("/public/assets/menu/fondologin.png") no-repeat center center;
+  background-size: cover;
+  font-family: "Press Start 2P", sans-serif;
+  color: white;
+  text-shadow: 2px 2px black;
+}
+
+.form-container {
+  background: rgba(0, 0, 0, 0.6);
+  padding: 20px;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+input,
+button {
+  padding: 10px;
+  font-family: "Press Start 2P", sans-serif;
+  font-size: 12px;
+}
+
+button {
+  cursor: pointer;
+  background-color: #444;
+  color: white;
+  border: none;
+}
+
+@font-face {
+  font-family: "PixelFont";
+  src: url("assets/fonts/pixel-font.ttf") format("truetype");
 }

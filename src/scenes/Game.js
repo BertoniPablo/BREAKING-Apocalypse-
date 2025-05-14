@@ -31,10 +31,12 @@ class Block extends Phaser.GameObjects.Sprite {
     this.setPosition(x, y);
     this.setScale(0.5);
 
+    // añade bloque estático a la escena
     this.scene.add.existing(this);
-    this.scene.physics.add.existing(this, true); //blocks estáticos
+    this.scene.physics.add.existing(this, true);
   }
 
+  // destruye sprite de bloque
   destroy() {
     super.destroy();
   }
@@ -43,28 +45,18 @@ class Block extends Phaser.GameObjects.Sprite {
 export class Game extends Scene {
   constructor() {
     super("Game");
-    this.player1 = {
-      score: 0,
-      controls: null,
-      blocks: [],
-    };
-    this.player2 = {
-      score: 0,
-      controls: null,
-      blocks: [],
-    };
+    // datos iniciales de jugadores y temporizador
+    this.player1 = { score: 0, controls: null, blocks: [] };
+    this.player2 = { score: 0, controls: null, blocks: [] };
     this.timeLeft = 60;
-    this.margin = 19; //margen
+    this.margin = 19;
   }
 
+  // reinicia tiempo y música de vs
   init() {
     this.timeLeft = 60;
-    this.player1 = {
-      score: 0,
-    };
-    this.player2 = {
-      score: 0,
-    };
+    this.player1 = { score: 0 };
+    this.player2 = { score: 0 };
     if (!this.vsmusic || !this.vsmusic.isPlaying) {
       this.vsmusic = this.sound.add("vsmusic", { volume: 0.5, loop: true });
       this.vsmusic.play();
@@ -73,13 +65,18 @@ export class Game extends Scene {
     }
   }
 
+  // configura escena, jugadores y bloques
   create() {
+    // pausa música al salir
     this.events.on("shutdown", () => {
       this.vsmusic.pause();
     });
 
+    // fondo y UI
     this.add.image(575, 394, "bg-vs").setScale(1.02);
     this.add.image(575, 384.5, "uixvs");
+
+    // sprites de jugadores
     this.player1.sprite = this.physics.add
       .sprite(300, 385, "P1-idle")
       .setScale(0.87);
@@ -87,31 +84,27 @@ export class Game extends Scene {
       .sprite(900, 385, "P2-idle")
       .setScale(0.87);
 
-    //comportamientos players
+    // física de jugadores
     this.player1.sprite.setCollideWorldBounds(true);
     this.player2.sprite.setCollideWorldBounds(true);
-
     this.player1.sprite.body.setGravityY(400);
     this.player2.sprite.body.setGravityY(400);
 
+    // límites y creación de bloques
     const screenWidth = this.game.config.width;
     const halfScreenWidth = screenWidth / 2;
-    const blockSize = 30;
+    const player1StartX = 1;
+    const player1EndX = halfScreenWidth;
+    const player2StartX = halfScreenWidth;
+    const player2EndX = screenWidth;
 
-    //límites de bloques
-    const player1StartX = 1; //desde el borde izquierdo de la pantalla
-    const player1EndX = halfScreenWidth; //hasta la mitad de la pantalla
-
-    const player2StartX = halfScreenWidth; //desde la mitad de la pantalla
-    const player2EndX = screenWidth; //hasta el borde derecho de la pantalla
-
-    // Creamos los bloques para cada jugador usando los límites ajustados
     this.createBlocksForPlayer(this.player1, player1StartX, player1EndX, 1);
     this.createBlocksForPlayer(this.player2, player2StartX, player2EndX, 2);
 
+    // colisiones iniciales
     this.setColliders();
 
-    //controles perso
+    // controles de acción
     this.player1.controls = this.input.keyboard.addKeys({
       pala: "a",
       pico: "w",
@@ -125,6 +118,7 @@ export class Game extends Scene {
       jump: "SHIFT",
     });
 
+    // textos de puntuación y temporizador
     this.player1.scoreText = this.add.text(200, 15, ` ${this.player1.score}`, {
       fontSize: "32px",
       fill: "#ffffff",
@@ -135,11 +129,12 @@ export class Game extends Scene {
       ` ${this.player2.score}`,
       { fontSize: "32px", fill: "#ffffff" }
     );
-
     this.timerText = this.add.text(587, 15, ` ${this.timeLeft}`, {
       fontSize: "32px",
       fill: "#ffffff",
     });
+
+    // evento de cuenta regresiva
     this.timerEvent = this.time.addEvent({
       delay: 1005,
       callback: this.updateTimer,
@@ -147,11 +142,13 @@ export class Game extends Scene {
       loop: true,
     });
 
+    // escucha de teclas
     this.input.keyboard.on("keydown", (event) => {
       this.handleKeyPress(event);
     });
   }
 
+  // bucle principal: manejo de salto y búsqueda de columna
   update() {
     if (
       this.player1.controls.jump.isDown &&
@@ -166,20 +163,18 @@ export class Game extends Scene {
       this.player2.sprite.setVelocityY(-400);
     }
 
-    //detecta la primer columna de cada jugador
+    // detecta columna más cercana para colisiones
     this.checkClosestColumn(this.player1);
     this.checkClosestColumn(this.player2);
   }
 
+  // encuentra bloque más cercano debajo del jugador
   checkClosestColumn(player) {
     let closestBlock = null;
     let minDistance = Infinity;
 
     player.blocks.forEach((block) => {
-      // Calculamos la distancia horizontal (eje X) entre el jugador y el bloque
       const distanceX = Math.abs(player.sprite.x - block.x);
-
-      // Verificamos si el bloque está más cerca que el bloque más cercano encontrado hasta ahora
       if (distanceX < minDistance && block.y < player.sprite.y) {
         minDistance = distanceX;
         closestBlock = block;
@@ -190,15 +185,14 @@ export class Game extends Scene {
     }
   }
 
+  // genera bloques en una cuadrícula para un jugador
   createBlocksForPlayer(player, startX, endX, playerNumber) {
     player.blocks = [];
-
     const blockWidth = 50;
     const blockHeight = 50;
     const numCols = Math.floor((endX - startX) / blockWidth);
     const numRows = 5;
     const startY = this.game.config.height - numRows * blockHeight;
-
     const blockTypes = ["tierra", "madera", "piedra"];
 
     for (let row = 0; row < numRows; row++) {
@@ -211,17 +205,17 @@ export class Game extends Scene {
       }
     }
   }
-  //funcion
+
+  // registra aterrizaje en bloque
   handleLanding(playerSprite, block) {
     if (playerSprite.body.touching.down) {
-      //jugador aterrizo en un bloque
       console.log(`Jugador aterrizó sobre un bloque de tipo: ${block.type}`);
     }
   }
 
+  // configura colisiones entre jugadores y bloques
   setColliders() {
     this.physics.add.collider(this.player1.sprite, this.player2.sprite);
-
     this.player1.blocks.forEach((block) => {
       this.physics.add.collider(
         this.player1.sprite,
@@ -242,6 +236,7 @@ export class Game extends Scene {
     });
   }
 
+  // reproduce animación y destruye bloque si corresponde
   handleKeyPress(event) {
     if (event.key === "a") {
       this.handleBlockRemoval(this.player1, "a");
@@ -253,7 +248,6 @@ export class Game extends Scene {
       this.handleBlockRemoval(this.player1, "d");
       this.player1.sprite.play("PJ1_hacha");
     }
-
     if (event.key === "ArrowLeft") {
       this.handleBlockRemoval(this.player2, "LEFT");
       this.player2.sprite.play("PJ2_pala");
@@ -266,36 +260,27 @@ export class Game extends Scene {
     }
   }
 
+  // lógica de destrucción y regeneración de bloques
   handleBlockRemoval(player, key) {
     let blockToRemove = player.blocks.find((block) => block.keyremove === key);
     if (blockToRemove) {
-      // Obtener posición de la fila actual y la fila superior
       const currentRowY = blockToRemove.y;
-      const upperRowY = currentRowY - blockToRemove.height; // Asume que los bloques están alineados en una cuadrícula
-
-      // Comprobar si existen bloques en la fila superior
+      const upperRowY = currentRowY - blockToRemove.height;
       const isUpperRowEmpty = !player.blocks.some(
         (block) => block.y === upperRowY
       );
-
       if (!isUpperRowEmpty) {
-        // Si la fila superior no está vacía, no permite la destrucción
         console.log(
-          "No puedes destruir este bloque hasta que destruyas la fila superior."
+          "no puedes destruir este bloque hasta que destruyas la fila superior."
         );
         return;
       }
-
-      // Guardar posición del bloque
       const x = blockToRemove.x;
       const y = blockToRemove.y;
       const currentType = blockToRemove.type;
-
-      // Destruir el bloque y actualizar la lista de bloques del jugador
       blockToRemove.destroy();
       player.blocks = player.blocks.filter((block) => block !== blockToRemove);
 
-      // Regenerar bloque aleatorio tras un retraso
       const blockTypes = ["tierra", "madera", "piedra"];
       let newType = currentType;
       while (newType === currentType) {
@@ -316,32 +301,27 @@ export class Game extends Scene {
         callbackScope: this,
       });
 
-      // Actualizar puntuación
+      // suma puntos y actualiza marcador
       player.score += 10;
       player.scoreText.setText(` ${player.score}`);
     }
   }
 
+  // reduce tiempo y maneja fin de partida
   updateTimer() {
     this.timeLeft--;
     this.timerText.setText(`${this.timeLeft}`);
     if (this.timeLeft <= 0) {
       this.timerEvent.remove();
-
-      //determinar qn ganó
       let winner;
-      if (this.player1.score > this.player2.score) {
-        winner = "Player 1 WINS";
-      } else if (this.player2.score > this.player1.score) {
+      if (this.player1.score > this.player2.score) winner = "Player 1 WINS";
+      else if (this.player2.score > this.player1.score)
         winner = "Player 2 WINS";
-      } else {
-        winner = "It's a TIE";
-      }
-
+      else winner = "It's a TIE";
       this.scene.start("GameOver", {
         scoreP1: this.player1.score,
         scoreP2: this.player2.score,
-        winner: winner,
+        winner,
       });
     }
   }
