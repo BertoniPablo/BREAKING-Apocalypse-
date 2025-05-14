@@ -53,6 +53,6 @@ function startGame() {
 
   const script = document.createElement("script");
   script.type = "module";
-  script.src = "";
+  script.src = "src/main.js";
   document.body.appendChild(script);
 }
