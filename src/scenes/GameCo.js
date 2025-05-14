@@ -20,24 +20,22 @@ class Zombie extends Phaser.Physics.Arcade.Sprite {
         this.speed = 50;
         this.health = 3;
         this.damage = 0.5;
+        this.scale = 1;
         this.anims.play("zombie1_walk");
         break;
       case "zombie2":
         this.speed = 100;
         this.health = 5;
         this.damage = 1;
+        this.scale = 1;
         this.anims.play("zombie2_walk");
         break;
       case "zombie3":
         this.speed = 150;
         this.health = 7;
         this.damage = 2;
+        this.scale = 1;
         this.anims.play("zombie3_walk");
-        break;
-      default:
-        this.speed = 50;
-        this.health = 1;
-        this.anims.play("zombie1_walk");
         break;
     }
   }
@@ -63,6 +61,7 @@ class Tower extends Phaser.GameObjects.Sprite {
     this.type = type; // "flecha" o "bala"
     this.ammo = 0;
     this.range = 200;
+    this.scale = 0.7;
 
     scene.add.existing(this);
 
@@ -174,12 +173,22 @@ export class GameCo extends Scene {
       fontFamily: "Arial Black",
     });
 
+    //data municion
+    this.textAmmoP1 = this.add.text(1015, 25, "0       0", {
+      fontSize: "22px",
+      fill: "#fff",
+      fontFamily: "Arial Black",
+    });
+    this.textAmmoP2 = this.add.text(830, 25, "0      0", {
+      fontSize: "22px",
+      fill: "#fff",
+      fontFamily: "Arial Black",
+    });
+
     //mundo
     const map = this.make.tilemap({ key: "mapajuego" });
-
     const tilesetCamino = map.addTilesetImage("camino", "caminojuego");
     map.createLayer("camino", tilesetCamino).setDepth(-1);
-
     const tilesetSup = map.addTilesetImage("atlas_superficie", "atlas");
     const capaSup = map.createLayer("capasup", tilesetSup);
     capaSup.setCollisionByProperty({ collides: true }).setDepth(-1);
@@ -204,6 +213,9 @@ export class GameCo extends Scene {
     this.p2.setBounce(0);
     this.p2.setCollideWorldBounds(true);
     this.p2.play("p2_idle");
+
+    this.p1.ammoInventory = { bala: 0, flecha: 0 };
+    this.p2.ammoInventory = { bala: 0, flecha: 0 };
 
     //controles
     this.p1.controls = this.input.keyboard.addKeys({
@@ -245,6 +257,7 @@ export class GameCo extends Scene {
     };
 
     this.ammoGroup = this.physics.add.group();
+    this.physics.add.collider(this.ammoGroup, capaSup);
 
     for (let i = 0; i < 5; i++) {
       this.spawnCollectibleAmmo(
@@ -260,17 +273,13 @@ export class GameCo extends Scene {
     }
 
     //torres
-    this.towers = this.physics.add.group({
-      classType: Tower,
-      runChildUpdate: true,
-    });
+    this.towers = this.physics.add.staticGroup();
     //ubicaciones de construcción
-    this.towers = this.add.group({ classType: Tower, runChildUpdate: true });
     const positions = [
-      { x: 200, y: 300, type: "ballesta" },
-      { x: 400, y: 300, type: "ballesta" },
-      { x: 800, y: 300, type: "cañon" },
-      { x: 1000, y: 300, type: "cañon" },
+      { x: 350, y: 550, type: "ballesta" },
+      { x: 800, y: 230, type: "ballesta" },
+      { x: 160, y: 420, type: "cañon" },
+      { x: 900, y: 520, type: "cañon" },
     ];
     positions.forEach((p) =>
       this.towers.add(new Tower(this, p.x, p.y, p.type))
@@ -288,6 +297,16 @@ export class GameCo extends Scene {
     this.physics.add.collider(this.zombies, capaSup);
     this.physics.add.collider(this.ammoGroup, capaSup);
     this.physics.add.collider(this.towers, capaSup);
+    this.physics.add.collider(this.p1, this.towers);
+    this.physics.add.collider(this.p2, this.towers);
+
+    this.physics.add.overlap(
+      [this.p1, this.p2],
+      this.ammoGroup,
+      this.onAmmoCollect,
+      null,
+      this
+    );
 
     this.physics.add.collider(this.p1, this.p2);
     this.physics.add.collider(
@@ -362,30 +381,35 @@ export class GameCo extends Scene {
   //recoleccion municion
   onAmmoCollect(player, ammoSprite) {
     const type = ammoSprite.getData("type");
-    this.towers.getChildren().forEach((tower) => {
-      if (tower.type === type) {
-        tower.addAmmo(1);
-      }
-    });
+    player.ammoInventory[type]++; //suma solo al jugador que recogió
+    this.updateAmmoText(player);
     ammoSprite.destroy();
   }
 
   //recarga municion
   onReloadAmmo(player, tower) {
-    const t = tower.type;
-    const inv = player.ammoInventory[t];
+    const type = tower.type;
+    const inv = player.ammoInventory[type];
     if (inv > 0) {
       tower.addAmmo(inv);
-      player.ammoInventory[t] = 0;
+      player.ammoInventory[type] = 0;
+      this.updateAmmoText(player);
     }
+  }
+
+  //actualiza contador
+  updateAmmoText(player) {
+    const txt = player === this.p1 ? this.textAmmoP1 : this.textAmmoP2;
+    const inv = player.ammoInventory;
+    txt.setText(` ${inv.bala}       ${inv.flecha}`);
   }
 
   perderVida(player) {
     if (player === 1 && this.vidap1 > 0) {
-      this.vidap1--; // Disminuir vidas del Jugador 1
+      this.vidap1--;
       this.textvidap1.setText(`x${this.vidap1}`);
     } else if (player === 2 && this.vidap2 > 0) {
-      this.vidap2--; // Disminuir vidas del Jugador 2
+      this.vidap2--;
       this.textvidap2.setText(`x${this.vidap2}`);
     }
 
