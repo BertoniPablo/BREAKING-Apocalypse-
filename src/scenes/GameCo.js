@@ -774,3 +774,5 @@ export class GameCo extends Scene {
     });
   }
 }
+
+// gracias breaking por el aprendizaje. ya está, ultimo push. :´)
