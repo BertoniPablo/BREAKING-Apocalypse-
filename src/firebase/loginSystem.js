@@ -51,8 +51,7 @@ function startGame() {
   document.getElementById("login-container").style.display = "none";
   document.getElementById("app").style.display = "block";
 
-  const script = document.createElement("script");
-  script.type = "module";
-  script.src = "src/main.js";
-  document.body.appendChild(script);
+  import("/src/main.js")
+    .then(() => console.log("Juego iniciado"))
+    .catch((err) => console.error("Error cargando juego:", err));
 }
